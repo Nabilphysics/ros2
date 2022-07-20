@@ -42,3 +42,7 @@ sudo apt list
 Remove package:
 sudo apt purge PACKAGENAME
 ------
+Virual Box Copy-paste problem solution.
+Install Virtual Box Guest Edition
+Follow This link: https://linuxconfig.org/install-virtualbox-guest-additions-on-linux-guest
+-----
