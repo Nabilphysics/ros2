@@ -1,3 +1,25 @@
+## Install GUI Tool Stacer
+```
+sudo apt install stacer
+```
+## apt list installed packages
+```
+apt list
+```
+## List all installed packages only
+```
+apt list --installed
+```
+## List App Package:
+```
+sudo apt list
+```
+## Remove package:
+```
+sudo apt purge PACKAGENAME
+```
+## More Package Related Command
+https://www.cyberciti.biz/faq/apt-get-list-packages-are-installed-on-ubuntu-linux/
 ## Auto remove Unnecessary Package
 
 This option removes libs and packages that were installed automatically to satisfy the dependencies of an installed package. If that package is removed, these automatically installed packages are useless in the system.
@@ -37,19 +59,6 @@ journalctl --disk-usage
 Now, there are ways to clean systemd journal logs. The easiest for you is to clear the logs that are older than certain days.
 ```
 sudo journalctl --vacuum-time=3d
-```
-
-## Install GUI Tool Stacer
-```
-sudo apt install stacer
-```
-## List App Package:
-```
-sudo apt list
-```
-## Remove package:
-```
-sudo apt purge PACKAGENAME
 ```
 ## Virual Box Copy-paste problem solution.
 Install Virtual Box Guest Edition
