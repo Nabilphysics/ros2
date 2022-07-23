@@ -23,10 +23,10 @@ ros2 node info <node_name>
 ```
 ros2 topic info /chatter
 ```
-Example Output:
-Type: std_msgs/msg/String
-Publisher count: 1
-Subscription count: 0
+Example Output:</br>
+Type: std_msgs/msg/String</br>
+Publisher count: 1 </br>
+Subscription count: 0 </br>
 
 
 ### ROS2 Message Info
