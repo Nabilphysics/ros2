@@ -99,4 +99,26 @@ Now we have to add this in bashrc file
  ```
  source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash
  ```
+ ### Create Workspace
+ go to home directory using command
+ ```
+ cd
+ ```
+ then
+```
+ mkdir ros2_ws
+```
+ enter ros2_ws folder/directory using 
+ ```
+ cd ros2_ws
+ ```
+ create a folder/directory src using
+ ```
+ mkdir src
+ ```
+ then from ros2_ws directory type
+ ```
+ colcon build
+ ```
  
+    
