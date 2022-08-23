@@ -80,3 +80,23 @@ ros2 topic bw /chatter
  ros2 run turtlesim turtle_teleop_key
  ```
  here turtlesim is a package and turtlesim_node and turtle_teleop_key are the node.
+ 
+ ## ROS2 Workspace creation
+ ### Install Colcon Build Tool
+```
+ sudo apt install python3-colcon-common-extensions
+ ```
+ enable colcon autocompletion
+ ```
+ cd /usr/share/colcon_argcomplete/hook/
+ ```
+use command ls and you should see colcon-argcomplete.bash  colcon-argcomplete.zsh
+Now we have to add this in bashrc file
+```
+ nano ~/.bashrc
+ ```
+ add below line and save
+ ```
+ source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash
+ ```
+ 
