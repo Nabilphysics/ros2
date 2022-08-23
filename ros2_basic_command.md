@@ -120,5 +120,8 @@ Now we have to add this in bashrc file
  ```
  colcon build
  ```
- 
+ ## Source our newly created workspace to be able to use its node
+ ```
+ source ~/ros2_ws/install/setup.bash
+ ```
     
