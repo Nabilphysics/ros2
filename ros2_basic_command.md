@@ -66,3 +66,8 @@ ros2 topic hz /chatter
 ```
 ros2 topic bw /chatter
 ```
+### See what is going on in Graph
+ ```
+ rqt_graph
+ ```
+ 
