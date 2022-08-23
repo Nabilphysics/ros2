@@ -66,8 +66,17 @@ ros2 topic hz /chatter
 ```
 ros2 topic bw /chatter
 ```
-### See what is going on in Graph
+### See what is going on Graphically
  ```
  rqt_graph
  ```
- 
+ ### turtlesim package related
+ Start Turtlesim Graphical Tool
+ ```
+ ros2 run turtlesim turtlesim_node
+ ```
+ start turtle teleop keyboard to be able to control the turtle
+ ```
+ ros2 run turtlesim turtle_teleop_key
+ ```
+ here turtlesim is a package and turtlesim_node and turtle_teleop_key are the node.
