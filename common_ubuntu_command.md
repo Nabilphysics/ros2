@@ -85,3 +85,32 @@ sudo journalctl --vacuum-time=3d
 Install Virtual Box Guest Edition
 Follow This link: https://linuxconfig.org/install-virtualbox-guest-additions-on-linux-guest
 
+## Create , delete Folder/Directory
+### Create Directory
+```
+mkdir directory_name
+```
+here directory_name is the folder that we have just created
+### Delete directory
+To delete a directory with rmdir, type the command followed by the name of the directory you want to remove. For example, to delete a directory named dir1 you would type:
+```
+rmdir dir1
+```
+If the directory is not empty, you will get the following error:
+```
+Output:
+rmdir: failed to remove 'dir1': No such file or directory
+```
+For example to delete a directory named dir1 along with all of its contents you would type:
+```
+rm -r dir1
+```
+If a directory or a file within the directory is write-protected, you will be prompted to confirm the deletion. To remove a directory without being prompted, use the -f option:
+```
+rm -rf dir1
+```
+to delete multiple directory
+```
+rm -r dir1 dir2 dir3
+```
+
