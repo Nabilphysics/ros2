@@ -2,6 +2,14 @@
 ```
 source /opt/ros/humble/setup.bash
 ```
+### Add source in bashrc
+```
+nano ~./bashrc
+```
+then add below command in the last line and save 
+```
+source /opt/ros/humble/setup.bash
+```
 ### Demo Node to Listen:
 ```
 ros2 run demo_nodes_py listener
