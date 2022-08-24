@@ -124,4 +124,29 @@ Now we have to add this in bashrc file
  ```
  source ~/ros2_ws/install/setup.bash
  ```
-    
+ ## ROS2 Python Package creation
+ Useful Video: https://youtu.be/iBGZ8LEvkCY
+ 
+ go to src directory using this command
+ ```cd ~/ros2_ws/src/```
+ then create package using this command
+ ```
+ ros2 pkg create my_robot_controller --build-type ament_python --dependencies rclpy
+ ```
+ here, 
+ Package Name: my_robot_controller
+ Build System : ament_python for Python package or ament_cmake for C++ package
+ rclpy : python client library for ROS2
+ rclcpp : C++ client library for ROS2
+ 
+ download visual studio code using following command
+ ``` 
+ sudo snap install code --classic 
+ ```
+ Open Visual Studio in the same directory just type
+ ``` 
+ code . 
+ ```
+ visual studio will be open and click trust
+ 
+ 
