@@ -113,4 +113,7 @@ to delete multiple directory
 ```
 rm -r dir1 dir2 dir3
 ```
-
+### Create a file using touch command
+```
+chmod +x my_first_node.py
+```
