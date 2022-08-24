@@ -149,4 +149,18 @@ Now we have to add this in bashrc file
  ```
  visual studio will be open and click trust
  
+ ### Creating a new node in our workspace and package
+ Go to the directory ros2_ws > src > my_robot_controller > my_robot_controller 
+ ```
+ cd ~/ros2_ws/src/my_robot_controller/my_robot_controller
+ ```
+ create my_first_node.py file
+ ```
+touch my_first_node.py
+ ```
+ Now change permission to make it executable
+ ```
+ chmod +x my_first_node.py
+ ```
+ 
  
