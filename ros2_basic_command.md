@@ -70,7 +70,7 @@ ros2 topic bw /chatter
  ```
  rqt_graph
  ```
- ### turtlesim package related
+ ### Play with Turtlesim Simulator
  Start Turtlesim Graphical Tool
  ```
  ros2 run turtlesim turtlesim_node
@@ -240,4 +240,24 @@ setup(
 )
 
 ```
- 
+From ```~/ros2_ws``` workspace build the update that we have made
+```
+colcon build
+```
+Now run the node
+```
+ros2 run my_robot_controller test_node
+```
+Everytime we made a change in our code we have to build. But Python is an interpreted lanugae. An interpreted language is a programming language which are generally interpreted, without compiling a program into machine instructions. </br>
+
+</bn>to avoid build every time we can do following thing
+in ```ros2_ws``` workspace
+```
+colcon build --symlink-install
+```
+then source bashrc
+```
+source ~/.bashrc
+```
+From now you can just change the python code and after saving change will be reflect without building. 
+
