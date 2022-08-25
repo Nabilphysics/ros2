@@ -301,3 +301,93 @@ Runs executables provided by a package
 ```
 ros2 run <package_name> <executable_file>
 ```
+### Turtlesim Draw Circle
+lets create another node name ```draw_circle``` as like ```test_node```</br>
+follow previous node creation process and also update ```setup.py``` and ```package.xml```
+
+draw_circle.py Code:
+```python
+#! /usr/bin/env python3
+
+import rclpy
+from rclpy.node import Node
+from geometry_msgs.msg import Twist
+
+class DrawCircleNode(Node):
+    def __init__(self):
+        super().__init__("draw_circle")
+        self.cmd_vel_publisher_ = self.create_publisher(Twist, "/turtle1/cmd_vel",10)
+        self.timer_ = self.create_timer(0.5, self.send_velocity_command)
+        self.get_logger().info("Draw Circle Node has been Started")
+
+    def send_velocity_command(self):
+        msg = Twist()
+        msg.linear.x = 2.0
+        msg.angular.z = 1.0
+        self.cmd_vel_publisher_.publish(msg)
+
+def main(args = None):
+    rclpy.init(args = args)
+    node = DrawCircleNode()
+    rclpy.spin(node)
+    rclpy.shutdown()
+```
+setup.py code:
+```python
+from setuptools import setup
+
+package_name = 'my_robot_controller'
+
+setup(
+    name=package_name,
+    version='0.0.0',
+    packages=[package_name],
+    data_files=[
+        ('share/ament_index/resource_index/packages',
+            ['resource/' + package_name]),
+        ('share/' + package_name, ['package.xml']),
+    ],
+    install_requires=['setuptools'],
+    zip_safe=True,
+    maintainer='nabil',
+    maintainer_email='www.nabilbd.com',
+    description='TODO: Package description',
+    license='TODO: License declaration',
+    tests_require=['pytest'],
+    entry_points={
+        'console_scripts': [
+            "test_node = my_robot_controller.my_first_node:main",
+            # Executable Name = test_node
+            # Package Name = my_robot_controller
+            # Python File Name = my_first_node
+            # main function = main
+            "draw_circle = my_robot_controller.draw_circle:main"
+        ],
+    },
+)
+```
+package.xml file:
+```xml
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>my_robot_controller</name>
+  <version>0.0.0</version>
+  <description>TODO: Package description</description>
+  <maintainer email="nabil@todo.todo">nabil</maintainer>
+  <license>TODO: License declaration</license>
+
+  <depend>rclpy</depend>
+  <depend>geometry_msgs</depend>
+  <depend>turtlesim</depend>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
+```
