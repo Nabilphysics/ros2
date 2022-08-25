@@ -268,5 +268,7 @@ then source bashrc
 ```
 source ~/.bashrc
 ```
-From now you can just change the python code and after saving change will be reflect without building. 
+From now you can just change the python code and after saving change will be reflected without building. 
+Now run the node and see visually using ```rqt_graph```
 
+![alt text](https://github.com/Nabilphysics/ros2/blob/main/images/rqt_graph_first_node.JPG?resize=650,400)
