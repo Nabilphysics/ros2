@@ -272,3 +272,10 @@ From now you can just change the python code and after saving change will be ref
 Now run the node and see visually using ```rqt_graph```
 
 ![alt text](https://github.com/Nabilphysics/ros2/blob/main/images/rqt_graph_first_node.JPG)
+
+You can see node info while node is running 
+```
+ros2 node list
+```
+ros2 node info /nabil_first_node
+```
