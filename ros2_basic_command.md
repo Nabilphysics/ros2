@@ -162,5 +162,82 @@ touch my_first_node.py
  ```
  chmod +x my_first_node.py
  ```
- 
+Now open visual studio in the same directory (i.e. ros2_ws > src > my_robot_controller > my_robot_controller) 
+ ```
+ code .
+ ```
+ and add following code and save the ```my_first_node.py``` file
+
+ ```python
+#! /usr/bin/env python3
+import rclpy
+from rclpy.node import Node
+
+
+class MyNode(Node):
+
+    def __init__(self):
+        super().__init__("nabil_first_node")
+        # node name : first_node but this file name my_first_node
+        # remember executable name may be different in setup.py file
+        self.get_logger().info("Hello form nabil_first_node")
+
+def main(args = None):
+    # Start the node
+    rclpy.init(args = args)
+    
+    node = MyNode()
+    # spin will keep the node running
+    rclpy.spin(node) 
+
+    # Finally Shutdown the node
+    rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()
+ ```
+Now open setup.py file and add code in console_scripts. Actually it's the instruction to create executables.</br>
+We are going to add ```"test_node = my_robot_controller.my_first_node:main"```</br>
+Where,</br>
+Executable Name = test_node</br>
+Package Name = my_robot_controller</br>
+Python File Name = my_first_node</br>
+main function = main</br>
+
+Full code ```setup.py```
+
+```python
+from setuptools import setup
+
+package_name = 'my_robot_controller'
+
+setup(
+    name=package_name,
+    version='0.0.0',
+    packages=[package_name],
+    data_files=[
+        ('share/ament_index/resource_index/packages',
+            ['resource/' + package_name]),
+        ('share/' + package_name, ['package.xml']),
+    ],
+    install_requires=['setuptools'],
+    zip_safe=True,
+    maintainer='nabil',
+    maintainer_email='www.nabilbd.com',
+    description='TODO: Package description',
+    license='TODO: License declaration',
+    tests_require=['pytest'],
+    entry_points={
+        'console_scripts': [
+            "test_node = my_robot_controller.my_first_node:main"
+            # Executable Name = test_node
+            # Package Name = my_robot_controller
+            # Python File Name = my_first_node
+            # main function = main
+        ],
+    },
+)
+
+```
  
