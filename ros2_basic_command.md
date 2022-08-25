@@ -180,7 +180,16 @@ class MyNode(Node):
         super().__init__("nabil_first_node")
         # node name : first_node but this file name my_first_node
         # remember executable name may be different in setup.py file
-        self.get_logger().info("Hello form nabil_first_node")
+        self.counter_ = 1
+        # This node first print the following line
+        self.get_logger().info("Hello from nabil_first_node")
+        # This timer will call timer_callback function in every 0.5 Second
+        self.create_timer(0.5, self.timer_callbac)
+
+    def timer_callbac(self):
+        self.get_logger().info("www.nabilbd.com " + "Counter: " + str(self.counter_))
+        self.counter_ = self.counter_ + 1
+
 
 def main(args = None):
     # Start the node
