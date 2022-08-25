@@ -277,5 +277,27 @@ You can see node info while node is running
 ```
 ros2 node list
 ```
+```
 ros2 node info /nabil_first_node
+```
+### Package Related Command
+List of All the Packages
+```
+ros2 pkg list
+```
+Search or Filter package
+```
+ros2 pkg list | grep PACKAGE_NAME
+```
+See executables under certain package
+```
+ros2 pkg executables turtlesim
+```
+See package location ```ros2 pkg prefix --share PACKAGE_NAME```
+```
+ros2 pkg prefix --share turtlesim
+```
+Runs executables provided by a package 
+```
+ros2 run <package_name> <executable_file>
 ```
