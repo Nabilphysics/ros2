@@ -391,3 +391,22 @@ package.xml file:
   </export>
 </package>
 ```
+## Run TurtleSim from Commandline
+
+Step 1: Run TurtleSim Node
+```
+ros2 run turtlesim turtlesim_node
+```
+Step 2: See all ros2 topic 
+```
+ros2 topic list
+```
+Step 3: We are interested in ```/turtle1/cmd_vel``` topic. So we need more info
+```
+ros2 topic info /turtle1/cmd_vel\
+```
+Step 4: Now we will see the Type:
+```
+ros2 interface show geometry_msgs/msg/Twist
+```
+Step 5: 
