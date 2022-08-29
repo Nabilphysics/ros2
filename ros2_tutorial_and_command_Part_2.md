@@ -443,6 +443,10 @@ See service list
 ```
 ros2 service list
 ```
+To see in details 
+```
+ros2 service list -t
+```
 ```
 ros2 service type /add_two_ints
 ```
