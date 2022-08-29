@@ -428,3 +428,28 @@ angular:
   ```
   You will see that Turtle is moving towards x direction.  
 
+## ROS2 Service
+Services are another method of communication for nodes in the ROS graph. Services are based on a call-and-response model, versus topics’ publisher-subscriber model. While topics allow nodes to subscribe to data streams and get continual updates, services only provide data when they are specifically called by a client.</br>
+https://docs.ros.org/en/foxy/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Services/Understanding-ROS2-Services.html
+</br>
+
+### Service Related Command & Play with service
+Run a demo service
+```
+ros2 run demo_nodes_cpp add_two_ints_server
+```
+Our goal is to send two number and this service will give us back the summation result. </br> 
+See service list
+```
+ros2 service list
+```
+```
+ros2 service type /add_two_ints
+```
+```
+ros2 interface show example_interfaces/srv/AddTwoInts
+```
+Now we will send two number to the service
+```
+ros2 service call /add_two_ints example_interfaces/srv/AddTwoInts "{'a':2,'b':3}"
+```
