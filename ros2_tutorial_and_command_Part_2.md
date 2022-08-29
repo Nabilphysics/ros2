@@ -453,7 +453,11 @@ Now we will send two number to the service
 ```
 ros2 service call /add_two_ints example_interfaces/srv/AddTwoInts "{'a':2,'b':3}"
 ```
-Likewise, </br>
+## TurtleSim related service </br>
+First, start TurtleSim Node
+```
+ros2 run turtlesim
+```
 More Turtle:
 ```
 ros2 service call /spawn turtlesim/srv/Spawn "{'x': 5.0, 'y':5.0, 'theta':90.0, 'name':'commando'}"
