@@ -403,10 +403,28 @@ ros2 topic list
 ```
 Step 3: We are interested in ```/turtle1/cmd_vel``` topic. So we need more info
 ```
-ros2 topic info /turtle1/cmd_vel\
+ros2 topic info /turtle1/cmd_vel
 ```
 Step 4: Now we will see the Type:
 ```
 ros2 interface show geometry_msgs/msg/Twist
 ```
-Step 5: 
+Step 5: We have to Publish Twist message in ```/turtle1/cmd_vel``` topic command format is </br>
+```
+ros2 topic pub -t 1 <topic> <message_type> <message>
+```
+Where, -t is how many times we want to send the message</br>
+Tip: Type ```ros2 topic pub -t 1 /turtle1/cmd_vel geometry_msgs/msg/Twist "lin``` and press ```tab``` and then fill the message
+So we are sending
+```
+ros2 topic pub -t 1 /turtle1/cmd_vel geometry_msgs/msg/Twist "linear:
+  x: 2.0
+  y: 0.0
+  z: 0.0
+angular:
+  x: 0.0
+  y: 0.0
+  z: 0.0"
+  ```
+  You will see that Turtle is moving towards x direction.  
+
