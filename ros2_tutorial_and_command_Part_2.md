@@ -629,3 +629,5 @@ def generate_launch_description():
    ```
    ros2 launch turtlesim_mimic_launch.py
    ```
+## Recording and Playback Data
+https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools/Recording-And-Playing-Back-Data/Recording-And-Playing-Back-Data.html
