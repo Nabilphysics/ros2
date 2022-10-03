@@ -1,3 +1,5 @@
+After creating ubuntu virtual box you might want to increase disk size. First incease the size from virtual box using this link https://itsfoss.com/increase-disk-size-virtualbox/ . Then turn on the ubuntu virtual machine. 
+
 Video: https://www.youtube.com/watch?v=a-MeH95ei1g
 
 Step 1: 
