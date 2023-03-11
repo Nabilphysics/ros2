@@ -81,10 +81,15 @@ Now, there are ways to clean systemd journal logs. The easiest for you is to cle
 ```
 sudo journalctl --vacuum-time=3d
 ```
-## Virual Box Copy-paste problem solution.
+## Virtual Box Copy-paste problem solution.
 Install Virtual Box Guest Edition
 Follow This link: https://linuxconfig.org/install-virtualbox-guest-additions-on-linux-guest
-
+## Virtual Box macos slow running problem solution
+```
+sudo nano /Applications/VirtualBox.app/Contents/Resources/VirtualBoxVM.app/Contents/Info.plist
+```
+Now find the line that says <key>NSHighResolutionCapable</key> and change <true/> to <false/>
+if you fail to write then go to System Settings > Privacy & Security > Full Disk Access, give terminal to access the disk.
 ## Create , delete Folder/Directory
 ### Create Directory
 ```
