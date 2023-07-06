@@ -27,6 +27,13 @@ ros2 node list
 ```
 ros2 node info <node_name>
 ```
+### ros2 topic list
+```
+ros2 topic list
+```
+```
+ros2 topic list -t
+```
 ### ROS2 Topic info:
 ```
 ros2 topic info /chatter
