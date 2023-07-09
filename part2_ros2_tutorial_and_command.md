@@ -156,6 +156,24 @@ Now we have to add this in bashrc file
  code . 
  ```
  visual studio will be open and click trust
+
+```
+colcon build
+```
+if you find any error you may need to downgrade python package setuptools to 58.2.0 </br>
+If pip3 is not installed
+```
+sudo apt install python3-pip
+```
+then
+```
+pip3 install setuptools==58.2.0
+```
+Now build using 
+```
+colcon build
+```
+
  
  ### Creating a new node in our workspace and package
  Go to the directory ros2_ws > src > my_robot_controller > my_robot_controller 
