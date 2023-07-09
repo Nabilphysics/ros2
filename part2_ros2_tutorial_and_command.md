@@ -142,6 +142,7 @@ Now we have to add this in bashrc file
  ```
  here, 
  Package Name: my_robot_controller
+ Build Tool : Colcon
  Build System : ament_python for Python package or ament_cmake for C++ package
  rclpy : python client library for ROS2
  rclcpp : C++ client library for ROS2
