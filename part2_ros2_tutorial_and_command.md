@@ -147,7 +147,7 @@ Now we have to add this in bashrc file
  rclpy : python client library for ROS2
  rclcpp : C++ client library for ROS2
  
- download visual studio code using following command
+ download visual studio code using the following command
  ``` 
  sudo snap install code --classic 
  ```
