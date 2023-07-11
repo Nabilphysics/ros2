@@ -174,6 +174,7 @@ Now build using
 colcon build
 ```
 
+
  
  ### Creating a new node in our workspace and package
  Go to the directory ros2_ws > src > my_robot_controller > my_robot_controller 
@@ -293,6 +294,12 @@ colcon build --symlink-install
 then source bashrc
 ```
 source ~/.bashrc
+```
+Warning: If package not found error popup then
+```
+cd ~/ros2_ws
+colcon build
+source install/setup.bash
 ```
 From now you can just change the python code and after saving change will be reflected without building. 
 Now run the node and see visually using ```rqt_graph```
