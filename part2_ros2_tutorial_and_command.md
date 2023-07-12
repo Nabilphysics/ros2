@@ -515,6 +515,10 @@ ros2 service type /add_two_ints
 ```
 ros2 interface show example_interfaces/srv/AddTwoInts
 ```
+Call a Service
+```
+ros2 service call <service_name> <service_type> <arguments>
+```
 Now we will send two number to the service
 ```
 ros2 service call /add_two_ints example_interfaces/srv/AddTwoInts "{'a':2,'b':3}"
