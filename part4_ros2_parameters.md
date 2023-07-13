@@ -84,4 +84,4 @@ in another terminal
 ```
 ros2 topic echo /number
 ```
-
+You will see that this node will count a number from 105 if we provide the parameter start_number as 105. Otherwise, it will count from the default value.
