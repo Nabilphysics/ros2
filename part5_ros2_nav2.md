@@ -27,5 +27,14 @@ gazebo
 ```
 ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
 ```
+To see in rviz
+```
+ros2 launch turtlebot3_cartographer cartographer.launch.py use_sim_time:=True
+```
+To drive the robot start a keyboard
+```
+ros2 run turtlebot3_teleop teleop_keyboard
+```
+
 
 
