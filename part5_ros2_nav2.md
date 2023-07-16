@@ -35,6 +35,10 @@ To drive the robot start a keyboard
 ```
 ros2 run turtlebot3_teleop teleop_keyboard
 ```
+To save the map
+```
+ros2 run nav2_map_server map_saver_cli -f maps/my_map
+```
 
 
 
