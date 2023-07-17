@@ -39,6 +39,9 @@ To save the map
 ```
 ros2 run nav2_map_server map_saver_cli -f maps/my_map
 ```
-
+To start a new world that is different from previous
+```
+ros2 launch turtlebot3_gazebo turtlebot3_house.launch.py
+```
 
 
