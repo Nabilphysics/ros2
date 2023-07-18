@@ -122,3 +122,13 @@ rm -r dir1 dir2 dir3
 ```
 chmod +x my_first_node.py
 ```
+## Nvidia Driver installation (Version 535) 
+```
+sudo apt install nvidia-driver-535 nvidia-dkms-535
+```
+and reboot, check
+```
+nvidia-smi
+```
+
+
