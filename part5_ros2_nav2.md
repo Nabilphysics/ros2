@@ -55,7 +55,7 @@ add the below line just before "source /opt/ros/humble/setup.bash"
 ```
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 ```
-So the bottom part of our bashrc file now look like
+So the bottom part of our bashrc file now looks like
 ```
 export TURTLEBOT3_MODEL=waffle
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
@@ -63,5 +63,14 @@ source /opt/ros/humble/setup.bash
 source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash
 source ~/ros2_ws/install/setup.bash
 ```
-edit some parameters
+Now we will edit some parameters,
+```
+cd /opt/ros/humble/share/turtlebot3_navigation2/param
+sudo gedit waffle.yaml
+```
+Now change robot_model_type: "differential" to
+```
+robot_model_type: "nav2_amcl::DifferentialMotionModel"
+```
+
 
