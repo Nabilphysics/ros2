@@ -43,5 +43,25 @@ To start a new world that is different from previous
 ```
 ros2 launch turtlebot3_gazebo turtlebot3_house.launch.py
 ```
-
+## Install Cyclone DDS
+```
+sudo apt install ros-humble-rmw-cyclonedds-cpp
+```
+add to bashrc
+```
+gedit ~/.bashrc
+```
+add the below line just before "source /opt/ros/humble/setup.bash" 
+```
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+```
+So the bottom part of our bashrc file now look like
+```
+export TURTLEBOT3_MODEL=waffle
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+source /opt/ros/humble/setup.bash
+source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash
+source ~/ros2_ws/install/setup.bash
+```
+edit some parameters
 
