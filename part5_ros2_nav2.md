@@ -73,8 +73,26 @@ Now change robot_model_type: "differential" to
 robot_model_type: "nav2_amcl::DifferentialMotionModel"
 ```
 
+
 ## Starting navigation
 ```
 ros2 launch turtlebot3_navigation2 navigation2.launch.py use_sim_time:=True map:=maps/my_map.yaml
 ```
+## Global Planner, Local Planner, Costmaps
+will be added
+## Recovery Behavior
+will be added
+## TF
+To see TF topic
+```
+ros2 topic list
+```
+```
+ros2 topic echo /tf
+```
+to export TF tree as pdf(it will listen to tf topics for 5 second and then it will export as pdf)
+```
+ros2 run tf2_tools view_frames 
+```
+
 
