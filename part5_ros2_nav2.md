@@ -95,4 +95,50 @@ to export TF tree as pdf(it will listen to tf topics for 5 second and then it wi
 ros2 run tf2_tools view_frames 
 ```
 
+## Building World in Gazebo, Make Turtlebot Navigate in World
+We will start navigating Turtlebot in our own world. After making a world in gazebo we will clone turtlebot repository in our machine and we will include our world in this repository</br>
+### Step 1: Make a workspace name turtlebot3_ws
+```
+mkdir turtlebot3_ws
+```
+```
+cd turtlebot3_ws
+mkdir src
+cd src
+```
+### Step 2: clone the repository
+```
+git clone https://github.com/ROBOTIS-GIT/turtlebot3_simulations.git .
+
+```
+. means clone here without making any directory. Now switch to humble-devel branch(according to your ros version)
+```
+git checkout humble-devel
+```
+### Step 3: Build the repository using colcon and source to the bashrc 
+```
+colcon build
+```
+source this workspace to bashrc
+```
+gedit ~/.bashrc 
+```
+and add
+```
+source ~/turtlebot3_ws/install/setup.bash
+```
+this line at the end of the file.</br>
+### Step 4: Add our world to our cloned repository and edit the launch file to drive the turtblebot to our own world.
+
+
+
+
+
+
+
+
+
+
+
+
 
