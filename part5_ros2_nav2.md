@@ -173,7 +173,10 @@ if gazebo hangs or crashes edit the pose(x_pose and y_pose) position of the laun
 ros2 run turtlebot3_teleop teleop_keyboard
 ```
 ### Step 9: Navigate and Create Map. 
+Drive the turtlebot and save the map like the previous one.
+
 ### Step 10: Clean the Map using Gimp or any photo editor
+Open the map using Gimp photo editor. Make the black line where necessary and also clear the unclear spaces.
 
 
 
