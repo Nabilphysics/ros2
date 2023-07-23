@@ -128,7 +128,26 @@ and add
 source ~/turtlebot3_ws/install/setup.bash
 ```
 this line at the end of the file.</br>
+
 ### Step 4: Add our world to our cloned repository and edit the launch file to drive the turtblebot to our own world.
+Cut and paste our newely created "my_world.world" file to cd ~/turtlebot3_ws/src/turtlebot3_gazebo/worlds
+
+### Step 5: Edit the launch file with our world
+go to 
+```
+cd ~/turtlebot3_ws/src/turtlebot3_gazebo/worlds
+```
+```
+cp turtlebot3_house.launch.py turtlebot3_my_world.launch.py
+```
+Now open turtlebot3_my_world.launch.py and fine the below line and replace with our own world file
+```
+  world = os.path.join(
+        get_package_share_directory('turtlebot3_gazebo'),
+        'worlds',
+        'my_world.world'
+    )
+```
 
 
 
