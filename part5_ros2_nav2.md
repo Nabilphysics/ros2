@@ -148,6 +148,33 @@ Now open turtlebot3_my_world.launch.py and fine the below line and replace with 
         'my_world.world'
     )
 ```
+### Step 6: Build the workspace
+```
+cd ~/turtlebot3_ws/
+```
+```
+colcon build
+```
+Open a new terminal or 
+```
+source install/setup.bash
+```
+### Step 7:
+```
+ros2 launch turtlebot3_gazebo turtlebot3_my_world.launch.py
+```
+if gazebo hangs or crashes edit the pose(x_pose and y_pose) position of the launch file from which position robot should launch.(Edit "turtlebot3_my_world.launch.py" file)</br>
+```
+ x_pose = LaunchConfiguration('x_pose', default='-0.0')
+ y_pose = LaunchConfiguration('y_pose', default='-0.0')
+```
+### Step 8: Drive the robot manually in this world
+```
+ros2 run turtlebot3_teleop teleop_keyboard
+```
+
+
+
 
 
 
