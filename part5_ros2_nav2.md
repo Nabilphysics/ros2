@@ -178,6 +178,27 @@ Drive the turtlebot and save the map like the previous one.
 ### Step 10: Clean the Map using Gimp or any photo editor
 Open the map using Gimp photo editor. Make the black line where necessary and also clear the unclear spaces.
 
+### Step 11: Run turtlebot3 in the world, create map, navigate
+```
+ros2 launch turtlebot3_gazebo turtlebot3_my_world.launch.py
+```
+To see in rviz
+```
+ros2 launch turtlebot3_cartographer cartographer.launch.py use_sim_time:=True
+```
+To drive the robot start a keyboard
+```
+ros2 run turtlebot3_teleop teleop_keyboard
+```
+To save the map
+```
+ros2 run nav2_map_server map_saver_cli -f maps/my_map_singlehouse
+```
+To navigate
+```
+ros2 launch turtlebot3_navigation2 navigation2.launch.py use_sim_time:=True map:=maps/my_map_singlehouse.yaml
+```
+
 
 
 
