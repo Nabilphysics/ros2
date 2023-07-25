@@ -277,3 +277,10 @@ ros2 run my_robot_controller led_state_reader
 ros2 run turtlebot3_teleop teleop_keyboard
 ```
 Now, if you press 'W' the led should be turned ON, and if you press 'S' the led should be turned OFF
+
+## How to monitor various topic
+We can use a tool name rqt to visualize the data
+```
+rqt
+```
+then, Plugins Menu > Topics > Topics Monitor
