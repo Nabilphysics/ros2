@@ -16,4 +16,8 @@ then,
 ```
 ros2 launch urdf_tutorial display.launch.py model:=turtlebot3_waffle.urdf
 ```
+### Install SLAM toolbox
+```
+sudo apt install ros-humble-slam-toolbox
+```
 
