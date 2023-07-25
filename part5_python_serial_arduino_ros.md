@@ -287,3 +287,10 @@ then, Plugins Menu > Topics > Topics Monitor
 
 ![alt text](https://github.com/Nabilphysics/ros2/blob/main/images/rqt_topic_monitor.png)
 
+## How to publish data from rqt
+```
+rqt
+```
+then, Plugins Menu > Topics > Message Publisher
+![alt text](https://github.com/Nabilphysics/ros2/blob/main/images/rqt_topic_publisher.png)
+
