@@ -284,3 +284,6 @@ We can use a tool name rqt to visualize the data
 rqt
 ```
 then, Plugins Menu > Topics > Topics Monitor
+
+![alt text](https://github.com/Nabilphysics/ros2/blob/main/images/rqt_topic_monitor.png)
+
