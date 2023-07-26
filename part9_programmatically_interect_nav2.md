@@ -110,7 +110,19 @@ code nav2_test.py
 ```
 Code:
 ```python
+#!/usr/bin/env python3
+import rclpy
+from nav2_simple_commander.robot_navigator import BasicNavigator
 
+def main():
+    # --- Init
+    rclpy.init()
+    nav = BasicNavigator()
+
+    rclpy.shutdown()
+
+if __name__== '__main__':
+    main()
 ```
 
 
