@@ -39,6 +39,21 @@ ros2 run turtlebot3_teleop teleop_keyboard
 ```
 then stop the teleop keyboard and save the map
 ```
+
 ros2 run nav2_map_server map_saver_cli -f maps/my_world
 ```
-we can also save(File>Save As) the configuration file from RViz
+we can also save(File>Save As) the configuration file from RViz<br>
+Now, launch the robot,
+```
+ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
+```
+nav2 bringup
+```
+ros2 launch nav2_bringup bringup_launch.py use_sim_time:=True map:=maps/my_world.yaml
+```
+rviz2
+```
+ros2 run rviz2 rviz2
+```
+from rviz2, Add Map, TF, Laser Scan, Robot Model.</br>
+In order to load the map, from the map dropdown menu at left > Select Topic as /map, Durability Policy as Transient Local 
