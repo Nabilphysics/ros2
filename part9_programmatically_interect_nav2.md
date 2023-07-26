@@ -116,6 +116,7 @@ code nav2_test.py
 Code:
 ```python
 #!/usr/bin/env python3
+# Code from Edouard Renard
 import rclpy
 from nav2_simple_commander.robot_navigator import BasicNavigator
 from geometry_msgs.msg import PoseStamped
@@ -166,6 +167,7 @@ def main():
         feedback = nav.getFeedback()
         print(feedback)
     
+    print(nav.getResult())
     #shutdown
     rclpy.shutdown()
 
