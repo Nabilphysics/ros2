@@ -59,6 +59,8 @@ from rviz2, Add Map, TF, Laser Scan, Robot Model.</br>
 In order to load the map, from the map dropdown menu at left > Select Topic as /map, Durability Policy as Transient Local</br>
 Also, add map> rename as Global Costmap. Add Topic> Global Costmap, Color Scheme> Costmap
 Now, add another map > rename it as Local Costmap. Add Topic > Local Costmap, Color Scheme > Costmap
+We can save the rviz configation in File> Save As
+My Rviz File link is, https://github.com/Nabilphysics/ros2/blob/main/files/my_world.rviz
 
 ## Launch File and Parameters
 
