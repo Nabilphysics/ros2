@@ -110,6 +110,7 @@ code nav2_test.py
 ```
 Code:
 ```python
+
 #!/usr/bin/env python3
 import rclpy
 from nav2_simple_commander.robot_navigator import BasicNavigator
