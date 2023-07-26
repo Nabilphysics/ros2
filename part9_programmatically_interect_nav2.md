@@ -99,6 +99,20 @@ To install
 ```
 sudo apt install ros-humble-nav2-simple-commander
 ```
+create a python file
+```
+touch nav2_test.py
+chmod +x nav2_test.py
+```
+Open in Visual Studio Code
+```
+code nav2_test.py
+```
+Code:
+```python
+
+```
+
 
 
 
