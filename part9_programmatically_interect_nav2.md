@@ -79,4 +79,26 @@ pose:
   - 0.06853891909122467
 ---
 ```
+Here, orientation is in Quaternion Angle</br>
+To see ros2 action and info
+```
+ros2 action list
+ros2 action info /navigate_to_pose
+```
+We should get
+```
+Action: /navigate_to_pose
+Action clients: 2
+    /bt_navigator
+    /waypoint_follower
+Action servers: 1
+    /bt_navigator
+```
+### Simple Python Commandar API
+To install
+```
+sudo apt install ros-humble-nav2-simple-commander
+```
+
+
 
