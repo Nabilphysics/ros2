@@ -115,7 +115,6 @@ code nav2_test.py
 ```
 Code:
 ```python
-
 #!/usr/bin/env python3
 import rclpy
 from nav2_simple_commander.robot_navigator import BasicNavigator
@@ -132,8 +131,8 @@ def main():
     initial_pose = PoseStamped()
     initial_pose.header.frame_id = 'map'
     initial_pose.header.stamp = nav.get_clock().now().to_msg()
-    initial_pose.pose.position.x = -2.0
-    initial_pose.pose.position.y = -0.5
+    initial_pose.pose.position.x = 0.0
+    initial_pose.pose.position.y = 0.0
     initial_pose.pose.position.z = 0.0
 
     initial_pose.pose.orientation.x = q_x
@@ -143,8 +142,30 @@ def main():
     
     nav.setInitialPose(initial_pose)
     
-    #Wait of Nav2
+    # Wait of Nav2
     nav.waitUntilNav2Active()
+    
+    # Send Nav2 Goal
+    # PI == 3.14 == 180
+    # PI/2 == 1.57 == 90
+    q_x, q_y, q_z, q_w = tf_transformations.quaternion_from_euler(0.0,0.0,1.57)
+    goal_pose = PoseStamped()
+    goal_pose.header.frame_id = 'map'
+    goal_pose.header.stamp = nav.get_clock().now().to_msg()
+    goal_pose.pose.position.x = 3.5
+    goal_pose.pose.position.y = 1.0
+    goal_pose.pose.position.z = 0.0
+    goal_pose.pose.orientation.x = q_x
+    goal_pose.pose.orientation.y = q_y
+    goal_pose.pose.orientation.z = q_z
+    goal_pose.pose.orientation.w = q_w
+    
+    nav.goToPose(goal_pose) 
+
+    while not nav.isTaskComplete():
+        feedback = nav.getFeedback()
+        print(feedback)
+    
     #shutdown
     rclpy.shutdown()
 
@@ -154,13 +175,13 @@ if __name__== '__main__':
 Now start turtlebot3, gazebo and rviz again
 ```
 ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
-ros2 launch nav2_bringup bringup_launch.py use_sim_time:=True map:=maps/my_world.yaml
+ros2 launch nav2_bringup bringup_launch.py use_sim_time:=True map:=maps/my_map.yaml
 ros2 run rviz2 rviz2
 ```
 or
 ```
 ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
-ros2 launch turtlebot3_navigation2 navigation2.launch.py use_sim_time:=True map:=maps/my_world.yaml
+ros2 launch turtlebot3_navigation2 navigation2.launch.py use_sim_time:=True map:=maps/my_map.yaml
 ```
 Now run the python code.
 
