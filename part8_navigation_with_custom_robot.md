@@ -26,7 +26,7 @@ ros2 launch nav2_bringup navigation_launch.py use_sim_time:=True
 ```
 other terminal we will now start navigation toolbox
 ```
-ros2 launch slam_toolbox online_async_launch.py use_sim_time:=Tru
+ros2 launch slam_toolbox online_async_launch.py use_sim_time:=True
 ```
 Start RVIZ2
 ```
