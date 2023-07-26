@@ -32,6 +32,13 @@ Start RVIZ2
 ```
 ros2 run rviz2 rviz2
 ```
-First, click Add button from left bottom side. Add TF and Map. You will not see map. Inorder to solve that we need to add /map in the Topic. Now map whould be loaded.</br>
-
-
+First, click Add button from the left bottom side. Add TF and Map. You will not see a map. In order to solve that we need to add /map in the Topic. Now the map would be loaded.</br>
+Run the robot to generate the map using teleop keyboard 
+```
+ros2 run turtlebot3_teleop teleop_keyboard
+```
+then stop the teleop keyboard and save the map
+```
+ros2 run nav2_map_server map_saver_cli -f maps/my_world
+```
+we can also save(File>Save As) the configuration file from RViz
