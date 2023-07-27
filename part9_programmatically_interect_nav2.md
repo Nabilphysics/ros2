@@ -195,6 +195,7 @@ import rclpy
 from nav2_simple_commander.robot_navigator import BasicNavigator
 from geometry_msgs.msg import PoseStamped
 import tf_transformations
+
 def create_pose_stamped(navigator: BasicNavigator, position_x, position_y, orientation_z):
     q_x, q_y, q_z, q_w = tf_transformations.quaternion_from_euler(0.0, 0.0, orientation_z)
     pose = PoseStamped()
@@ -209,6 +210,7 @@ def create_pose_stamped(navigator: BasicNavigator, position_x, position_y, orien
     pose.pose.orientation.w = q_w
     return pose
 
+
 def main():
     # --- Init
     rclpy.init()
@@ -216,7 +218,7 @@ def main():
 
     # Set initial pose
     initial_pose = create_pose_stamped(nav, 0.0,0.0, 0.0)
-    nav.setInitialPose(initial_pose)
+    #nav.setInitialPose(initial_pose)
     
     # Wait of Nav2
     nav.waitUntilNav2Active()
@@ -227,20 +229,35 @@ def main():
     goal_pose1 = create_pose_stamped(nav, 3.5, 1.0, 1.57)
     goal_pose2 = create_pose_stamped(nav, 2.0, 2.5, 3.14)
     goal_pose3 = create_pose_stamped(nav, 0.5, 1.0, -1.57)
+    goal_pose_return_home = create_pose_stamped(nav, 0.0, 0.0, 0.0)
     
     # Go to one pose
-    #nav.goToPose(goal_pose) 
-    #while not nav.isTaskComplete():
-     #   feedback = nav.getFeedback()
-      #  print(feedback)
+    # nav.goToPose(goal_pose_return_home) 
+    # while not nav.isTaskComplete():
+    #    feedback = nav.getFeedback()
+    #    print(feedback)
+   
+    
     
     # Follow Waypoints
-    waypoints = [goal_pose1, goal_pose2, goal_pose3]
-    while not nav.isTaskComplete():
-        feedback = nav.getFeedback()
-        print(feedback)
+    # waypoints = [goal_pose1, goal_pose2, goal_pose3]
+    # while not nav.isTaskComplete():
+    #     feedback = nav.getFeedback()
+    #     print(feedback)
 
+     # --- Follow Waypoints ---
+    waypoints = [goal_pose1, goal_pose2, goal_pose3, goal_pose_return_home]
+    
+   
+    while(1):
+        nav.followWaypoints(waypoints)
+        while not nav.isTaskComplete():
+            feedback = nav.getFeedback()
+            print(feedback)
 
+    # while not nav.isTaskComplete():
+    #    feedback = nav.getFeedback()
+    #    print(feedback)
 
     print(nav.getResult())
     #shutdown
