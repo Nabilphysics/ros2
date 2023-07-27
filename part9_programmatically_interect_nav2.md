@@ -218,6 +218,7 @@ def main():
 
     # Set initial pose
     initial_pose = create_pose_stamped(nav, 0.0,0.0, 0.0)
+    # ------- Uncomment if Intial Pose is not set already --------
     #nav.setInitialPose(initial_pose)
     
     # Wait of Nav2
@@ -238,13 +239,6 @@ def main():
     #    print(feedback)
    
     
-    
-    # Follow Waypoints
-    # waypoints = [goal_pose1, goal_pose2, goal_pose3]
-    # while not nav.isTaskComplete():
-    #     feedback = nav.getFeedback()
-    #     print(feedback)
-
      # --- Follow Waypoints ---
     waypoints = [goal_pose1, goal_pose2, goal_pose3, goal_pose_return_home]
     
@@ -255,10 +249,6 @@ def main():
             feedback = nav.getFeedback()
             print(feedback)
 
-    # while not nav.isTaskComplete():
-    #    feedback = nav.getFeedback()
-    #    print(feedback)
-
     print(nav.getResult())
     #shutdown
     rclpy.shutdown()
@@ -266,7 +256,7 @@ def main():
 if __name__== '__main__':
     main()
 ```
-One of the import thing is wait until a task has been completed.
+One of the important things is to wait until a task has been completed.
 ```python
 while not nav.isTaskComplete():
             feedback = nav.getFeedback()
