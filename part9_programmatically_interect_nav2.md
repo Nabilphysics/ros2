@@ -266,7 +266,12 @@ def main():
 if __name__== '__main__':
     main()
 ```
-
+One of the import thing is wait until a task has been completed.
+```python
+while not nav.isTaskComplete():
+            feedback = nav.getFeedback()
+            print(feedback)
+```
 
 
 
