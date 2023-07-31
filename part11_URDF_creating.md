@@ -323,5 +323,7 @@ Run it,
 ```
 ros2 launch urdf_tutorial display.launch.py model:=my_robot.urdf
 ```
+Final Result,
+![alt text](https://github.com/Nabilphysics/ros2/blob/main/images/urdf_two_wheel_robot.png)
 In RViz select Global Options > Fixed Frame > base_footprint
 
