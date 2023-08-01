@@ -195,4 +195,31 @@ To visualize,
 ![alt text](https://github.com/Nabilphysics/ros2/blob/main/images/ufdf_jointstate_to_tf.png)
 
 
+## Run the Robot State Publisher with URDF in Terminal
+Install xacro
+```
+sudo apt install ros-humble-xacro
+```
+Now run robot_state_publisher node from robot_state_publisher package and pass our URDF file as parameter
+```
+ros2 run robot_state_publisher robot_state_publisher --ros-args -p robot_description:="$(xacro my_robot.urdf)"
+```
+Now start joint_state_publisher executables from joint_state_publisher package, if not installed
+```
+sudo apt install ros-humble-joint-state-publisher-gui
+```
+run
+```
+ros2 run joint_state_publisher_gui joint_state_publisher_gui
+```
+run rviz
+```
+ros2 run rviz2 rviz2
+```
+from rviz,</br> 
+Add > TF </br>
+Fixed Frame> base_footprint<br>
+Add RobotModel, then, RobotModel > Description Topic > /robot_description<br>
+
+
 
