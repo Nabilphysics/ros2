@@ -288,7 +288,7 @@ ament_package()
 
 ```
 Now we will install urdf (have to add in cmakelist.txt)
-```
+```cmake
 cmake_minimum_required(VERSION 3.8)
 project(my_robot_description)
 
@@ -318,7 +318,7 @@ cd ~/ros2_ws/install/my_robot_description/share/my_robot_description/urdf
 ## Write a launch file to start the Robot State Publisher with URDF
 create a launch folder/directory inside my_robot_description. Also, add rviz and urdf folder. Save rviz config file inside rviz directory as "urdf_config.rviz" </br>
 add launch in our CMakeLists.txt
-```
+```cmake
 cmake_minimum_required(VERSION 3.8)
 project(my_robot_description)
 
