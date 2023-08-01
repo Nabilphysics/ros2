@@ -308,6 +308,48 @@ You can see bunch of things created. To see our urdf file
 cd ~/ros2_ws/install/my_robot_description/share/my_robot_description/urdf
 ```
 ## Write a launch file to start the Robot State Publishe with URDF
+create a launch folder/directory inside my_robot_description</br>
+add launch in our CMakeLists.txt
+```
+cmake_minimum_required(VERSION 3.8)
+project(my_robot_description)
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+# find dependencies
+find_package(ament_cmake REQUIRED)
+
+install(
+  DIRECTORY urdf launch
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+ament_package()
+```
+Create a file inside launch folder name "display.launch.xml"
+```xml
+<launch>
+    <let name="urdf_path" 
+         value="$(find-pkg-share my_robot_description)/urdf/my_robot.urdf" />
+
+    <node pkg="robot_state_publisher" exec="robot_state_publisher">
+        <param name="robot_description" value="$(command 'xacro $(var urdf_path)')" />
+    </node>
+    
+    <node pkg="joint_state_publisher_gui" exec="joint_state_publisher_gui">
+    </node>
+
+    <node pkg="rviz2" exec="rviz2" output="screen">
+    </node>
+</launch>
+```
+build using colcon build</br>
+run
+```
+ros2 launch my_robot_description display.launch.xml
+```
 
 
 
