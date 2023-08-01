@@ -228,7 +228,7 @@ If your config file is in home directory
 ```
 ros2 run rviz2 rviz2 -d ~/urdf_config.rviz
 ```
-Note: Before starting rviz you need to run joint_state_publisher and joint_state_publisher_gui from previous section.
+Note: Before starting rviz you need to run joint_state_publisher and joint_state_publisher_gui from the previous section.
 
 ## Create a Robot Description Package to Install URDF
 from home directory
@@ -260,10 +260,10 @@ ros2 pkg create my_robot_description
 ```
 cd my_robot_description
 rm -rf include/ src/
-mkdir urdf
+mkdir urdf rviz
 ```
-We are not gonna need incldue and src folder inside my_robot_description directory as we are not going to write c++ here, so , we have deleted those folders and created a folder named urdf</br>
-Now we will move our previously created my_robot.urdf file to this folder/directory,
+We are not gonna need incldue and src folder inside my_robot_description directory as we are not going to write c++ here, so , we have deleted those folders and created a folder named urdf and rviz</br>
+Now we will move our previously created my_robot.urdf file to this urdf directory ,
 ```
 cd
 mv my_robot.urdf ros2_ws/src/my_robot_description/urdf/
@@ -271,8 +271,8 @@ cd ros2_ws/src/
 code .
 ```
 We have opened visual studio code.</br>
-Inside my_robot_description directory we have CmakeList.txt. We are going to remove some code whicha are not necessary for us, so that CMakeLists.txt will look like this,
-```
+Inside my_robot_description directory we have CmakeList.txt. We are going to remove some code which are not necessary for us, so that CMakeLists.txt will look like this,
+```cmake
 cmake_minimum_required(VERSION 3.8)
 project(my_robot_description)
 
@@ -315,8 +315,8 @@ You can see bunch of things created. To see our urdf file
 ```
 cd ~/ros2_ws/install/my_robot_description/share/my_robot_description/urdf
 ```
-## Write a launch file to start the Robot State Publishe with URDF
-create a launch folder/directory inside my_robot_description</br>
+## Write a launch file to start the Robot State Publisher with URDF
+create a launch folder/directory inside my_robot_description. Also, add rviz and urdf folder. Save rviz config file inside rviz directory as "urdf_config.rviz" </br>
 add launch in our CMakeLists.txt
 ```
 cmake_minimum_required(VERSION 3.8)
@@ -330,18 +330,22 @@ endif()
 find_package(ament_cmake REQUIRED)
 
 install(
-  DIRECTORY urdf launch
+  DIRECTORY urdf launch rviz
   DESTINATION share/${PROJECT_NAME}/
 )
 
 ament_package()
+
 ```
 ### XML Launch File
-Create a file inside launch folder name "display.launch.xml"
+Create a file inside the launch folder name "display.launch.xml"
 ```xml
 <launch>
     <let name="urdf_path" 
          value="$(find-pkg-share my_robot_description)/urdf/my_robot.urdf" />
+    <let name="rviz_config_path"
+         value="$(find-pkg-share my_robot_description)/rviz/urdf_config.rviz" />
+
    
     <node pkg="robot_state_publisher" exec="robot_state_publisher">
         <param name="robot_description" value="$(command 'xacro $(var urdf_path)')" />
@@ -350,12 +354,12 @@ Create a file inside launch folder name "display.launch.xml"
     <node pkg="joint_state_publisher_gui" exec="joint_state_publisher_gui">
     </node>
 
-    <node pkg="rviz2" exec="rviz2" output="screen">
-    </node>
+    <node pkg="rviz2" exec="rviz2" output="screen" args="-d $(var rviz_config_path)" />
+  
 </launch>
-
+ 
  <?ignore
-    Reference for understading:
+    Reference for understanding:
     ros2 run robot_state_publisher robot_state_publisher --ros-args -p robot_description:="$(xacro my_robot.urdf)"
     ros2 run joint_state_publisher_gui joint_state_publisher_gui
     ros2 run rviz2 rviz2
@@ -381,6 +385,8 @@ def generate_launch_description():
     
     # find the path of my_robot.urdf where it has installed
     urdf_path = os.path.join(get_package_share_path('my_robot_description'), 'urdf', 'my_robot.urdf')
+    # rviz config path
+    rviz_config_path = os.path.join(get_package_share_path('my_robot_description'), 'rviz', 'urdf_config.rviz')
 
     #parameter value (will be used in node)
     robot_description = ParameterValue(Command(['xacro ', urdf_path]), value_type=str)
@@ -404,7 +410,8 @@ def generate_launch_description():
     #Reference: ros2 run rviz2 rviz2
     rviz2_node = Node(
         package="rviz2",
-        executable="rviz2"
+        executable="rviz2",
+        arguments=['-d', rviz_config_path]
         
     )
     
