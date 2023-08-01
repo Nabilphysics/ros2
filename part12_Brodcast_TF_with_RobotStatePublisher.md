@@ -220,6 +220,106 @@ from rviz,</br>
 Add > TF </br>
 Fixed Frame> base_footprint<br>
 Add RobotModel, then, RobotModel > Description Topic > /robot_description<br>
+So in summary, We started robot_state_publisher and passed urdf as parameter, then started joint_state_publisher_gui, and rviz.
+
+## Create a Robot Description Package to Install URDF
+from home directory
+```
+mkdir ros2_ws
+cd ros2_ws
+mkdir src
+```
+If you do not have colcon 
+```
+sudo apt install python3-colcon-common-extensions
+```
+to source from ros2_ws directory,
+```
+source install/setup.bash
+```
+add to beshrc
+```
+gedit ~/.bashrc
+```
+and add below command after ros2 source
+```
+source ~/ros2_ws/install/setup.bash
+```
+Create robot description package
+```
+ros2 pkg create my_robot_description
+```
+```
+cd my_robot_description
+rm -rf include/ src/
+mkdir urdf
+```
+We are not gonna need incldue and src folder inside my_robot_description directory as we are not going to write c++ here, so , we have deleted those folders and created a folder named urdf</br>
+Now we will move our previously created my_robot.urdf file to this folder/directory,
+```
+cd
+mv my_robot.urdf ros2_ws/src/my_robot_description/urdf/
+cd ros2_ws/src/
+code .
+```
+We have opened visual studio code.</br>
+Inside my_robot_description directory we have CmakeList.txt. We are going to remove some code whicha are not necessary for us, so that CMakeLists.txt will look like this,
+```
+cmake_minimum_required(VERSION 3.8)
+project(my_robot_description)
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+# find dependencies
+find_package(ament_cmake REQUIRED)
+
+
+ament_package()
+
+```
+Now we will install urdf (have to add in cmakelist.txt)
+```
+cmake_minimum_required(VERSION 3.8)
+project(my_robot_description)
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+# find dependencies
+find_package(ament_cmake REQUIRED)
+
+install(
+  DIRECTORY urdf
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+ament_package()
+
+```
+go to ros2_ws directory and
+```
+colcon build
+```
+You can see bunch of things created. To see our urdf file
+```
+cd ~/ros2_ws/install/my_robot_description/share/my_robot_description/urdf
+```
+## Write a launch file to start the Robot State Publishe with URDF
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
