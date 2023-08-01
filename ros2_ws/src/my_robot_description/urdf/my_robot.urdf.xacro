@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<robot name="my_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:property name="base_length" value="0.6" />
+
+    <material name="green">
+        <color rgba="0.0 0.5 0.0 1.0"/>    
+    </material>
+    <material name="blue">
+        <color rgba="0.0 0.0 0.5 1.0"/>    
+    </material>
+    <material name="grey">
+        <color rgba="0.0 0.5 0.5 1.0"/>    
+    </material>
+    
+    <link name="base_footprint">
+       
+    </link>
+
+    <link name="base_link">
+        <visual>
+            <geometry>
+                <box size="${base_length} 0.4 0.2"/>
+            </geometry>
+            <origin xyz="0 0 0.1" rpy="0 0 0"/>
+            <material name="blue"/>
+        </visual>
+    </link>
+
+    <link name="right_wheel_link">
+        <visual>
+            <geometry>
+                <cylinder radius="0.1" length="0.05"/>
+            </geometry>
+            <origin xyz="0.0 0.0 0.0" rpy="${pi/2.0} 0.0 0.0"/>
+            <material name="grey"/>
+        </visual>
+    </link>
+    <link name="left_wheel_link">
+        <visual>
+            <geometry>
+                <cylinder radius="0.1" length="0.05"/>
+            </geometry>
+            <origin xyz="0.0 0.0 0.0" rpy="${pi/2.0} 0.0 0.0"/>
+            <material name="grey"/>
+        </visual>
+    </link>
+     <link name="caster_wheel_link">
+        <visual>
+            <geometry>
+                <sphere radius="0.05"/>
+            </geometry>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <material name="grey"/>
+        </visual>
+    </link>
+
+
+    <joint name="base_joint" type="fixed">
+        <origin xyz="0.0 0.0 0.1" rpy="0 0 0"/>
+        <parent link="base_footprint"/>
+        <child link="base_link"/>
+       
+    </joint>
+
+    <joint name="base_right_wheel_joint" type="continuous">
+        <origin xyz="-0.15 -0.225 0.0" rpy="0 0 0"/>
+        <parent link="base_link"/>
+        <child link="right_wheel_link"/>
+        <axis xyz="0.0 1.0 0.0"/>  
+    </joint>
+    <joint name="base_left_wheel_joint" type="continuous">
+        <origin xyz="-0.15 0.225 0.0" rpy="0 0 0"/>
+        <parent link="base_link"/>
+        <child link="left_wheel_link"/>
+        <axis xyz="0.0 1.0 0.0"/>  
+    </joint>
+    <joint name="base_caster_wheel_joint" type="fixed">
+        <origin xyz="0.2 0.0 -0.05" rpy="0.0 0.0 0.0"/>
+        <parent link="base_link"/>
+        <child link="caster_wheel_link"/>  
+    </joint>
+
+</robot>
