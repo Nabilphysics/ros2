@@ -220,7 +220,15 @@ from rviz,</br>
 Add > TF </br>
 Fixed Frame> base_footprint<br>
 Add RobotModel, then, RobotModel > Description Topic > /robot_description<br>
-So in summary, We started robot_state_publisher and passed urdf as parameter, then started joint_state_publisher_gui, and rviz.
+So in summary, We started robot_state_publisher and passed urdf as parameter, then started joint_state_publisher_gui, and rviz.</br>
+Now save the config as "urdf_config.rviz" in home directory/folder
+
+### RVIZ config save and load with command
+If your config file is in home directory
+```
+ros2 run rviz2 rviz2 -d ~/urdf_config.rviz
+```
+Note: Before starting rviz you need to run joint_state_publisher and joint_state_publisher_gui from previous section.
 
 ## Create a Robot Description Package to Install URDF
 from home directory
