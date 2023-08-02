@@ -1,3 +1,5 @@
+/home/nabil/ros2_ws/install/my_robot_description/share/my_robot_description//urdf/common_properties.xacro
+/home/nabil/ros2_ws/install/my_robot_description/share/my_robot_description//urdf/mobile_base.xacro
 /home/nabil/ros2_ws/install/my_robot_description/share/my_robot_description//urdf/my_robot.urdf.xacro
 /home/nabil/ros2_ws/install/my_robot_description/share/my_robot_description//launch/display.launch.py
 /home/nabil/ros2_ws/install/my_robot_description/share/my_robot_description//launch/display.launch.xml
