@@ -69,5 +69,6 @@ Step 3: Publish velocity command to cmd_vel topic
 ros2 topic pub /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.3},angular:{z: 0.0}}"
 ```
 Note: if we see rqt_graph we can see diff_drive_controller node publishing to odom topic and tf directly. Usually we expect it publish to joint_states and joint_state publishes to tf. </br>
-![alt text](https://github.com/Nabilphysics/ros2/blob/main/images/gazibo_diff_drive_rqt_graph.png)
+![alt text](https://github.com/Nabilphysics/ros2/blob/main/images/gazibo_diff_drive_rqt_graph.png) </br>
+You may want to change rviz option to odom to see robot moving in rviz
 
