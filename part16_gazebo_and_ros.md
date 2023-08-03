@@ -19,7 +19,7 @@ Step 1: Add inertia for box, cylinder, and sphere as xacro:maco(like creating a 
         </inertial>
     </xacro:macro>
 ```
-Step 2: Provide inertia as parameter for each link in mobile_base.xacro file like
+Step 2: Provide inertia as a parameter for each link in mobile_base.xacro file like
 ```xml
 <xacro:box_inertia m="5.0" l="${base_length}" w="${base_width}" h="${base_height}"
                             xyz="0 0 ${base_height/2.0}" rpy="0 0 0" />
