@@ -194,8 +194,20 @@ Credit: https://www.youtube.com/@RoboticsBackEnd
 
 </robot>
 ```
+## Launch our Robot in Gazebo
 
-
+Step 1:
+```
+ros2 run robot_state_publisher robot_state_publisher --ros-args -p robot_description:="$(xacro ~/ros2_ws/src/my_robot_description/urdf/my_robot.urdf.xacro)"
+```
+Step 2: (in another terminal)
+```
+ros2 launch gazebo_ros gazebo.launch.py
+```
+Step 3: (in another terminal)
+```
+ros2 run gazebo_ros spawn_entity.py -topic robot_description -entity my_robot_1
+```
 
 
 
