@@ -1,24 +1,24 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-
-    <material name="green">
-        <color rgba="0.0 0.5 0.0 1.0"/>    
-    </material>
+    
     <material name="blue">
-        <color rgba="0.0 0.0 0.5 1.0"/>    
-    </material>
-    <material name="grey">
-        <color rgba="0.0 0.5 0.5 1.0"/>    
+        <color rgba="0 0 0.5 1" />
     </material>
 
-    <xacro:macro name="box_inertia" params="m l w h xyz rpy ">
+    <material name="grey">
+        <color rgba="0.5 0.5 0.5 1" />
+    </material>
+
+    <xacro:macro name="box_inertia" params="m l w h xyz rpy">
         <inertial>
-            <origin xyz="${xyz}" rpy="${rpy}"/>
-            <mass value="${m}"/>
-            <inertia ixx="${(m/12) * (h*h + l*l)}" ixy="0.0" ixz="0.0" 
-                     iyy="${(m/12) * (w*w + l*l)}"  iyz="0.0" izz="${(m/12) * (w*w + h*h)}" />
+            <origin xyz="${xyz}" rpy="${rpy}" />
+            <mass value="${m}" />
+            <inertia ixx="${(m/12) * (h*h + l*l)}" ixy="0" ixz="0"
+                     iyy="${(m/12) * (w*w + l*l)}" iyz="0"
+                     izz="${(m/12) * (w*w + h*h)}" />
         </inertial>
     </xacro:macro>
+
     <xacro:macro name="cylinder_inertia" params="m r h xyz rpy">
         <inertial>
             <origin xyz="${xyz}" rpy="${rpy}" />
@@ -38,5 +38,5 @@
                      izz="${(2/5) * m * r * r}" />
         </inertial>
     </xacro:macro>
-    
+
 </robot>
