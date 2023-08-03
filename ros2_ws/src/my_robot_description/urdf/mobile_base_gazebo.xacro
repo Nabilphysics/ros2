@@ -15,6 +15,7 @@
 
     <gazebo reference="caster_wheel_link">
         <material>Gazebo/Grey</material>
+        <!-- mu1 and mu2 to make friction less -->
         <mu1 value = "0.1" />
         <mu2 value = "0.1" />
     </gazebo>
