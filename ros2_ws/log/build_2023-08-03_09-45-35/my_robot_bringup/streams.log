@@ -1,0 +1,42 @@
+[0.004s] Invoking command in '/home/nabil/ros2_ws/build/my_robot_bringup': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/nabil/ros2_ws/install/my_robot_controller:/opt/ros/humble /usr/bin/cmake /home/nabil/ros2_ws/src/my_robot_bringup -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/nabil/ros2_ws/install/my_robot_bringup
+[0.040s] -- The C compiler identification is GNU 11.4.0
+[0.074s] -- The CXX compiler identification is GNU 11.4.0
+[0.078s] -- Detecting C compiler ABI info
+[0.106s] -- Detecting C compiler ABI info - done
+[0.109s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.109s] -- Detecting C compile features
+[0.110s] -- Detecting C compile features - done
+[0.111s] -- Detecting CXX compiler ABI info
+[0.144s] -- Detecting CXX compiler ABI info - done
+[0.148s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.148s] -- Detecting CXX compile features
+[0.148s] -- Detecting CXX compile features - done
+[0.151s] -- Found ament_cmake: 1.3.5 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.229s] -- Found Python3: /usr/bin/python3.10 (found version "3.10.12") found components: Interpreter 
+[0.257s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.308s] -- Configuring done
+[0.309s] -- Generating done
+[0.310s] -- Build files have been written to: /home/nabil/ros2_ws/build/my_robot_bringup
+[0.312s] Invoked command in '/home/nabil/ros2_ws/build/my_robot_bringup' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/nabil/ros2_ws/install/my_robot_controller:/opt/ros/humble /usr/bin/cmake /home/nabil/ros2_ws/src/my_robot_bringup -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/nabil/ros2_ws/install/my_robot_bringup
+[0.313s] Invoking command in '/home/nabil/ros2_ws/build/my_robot_bringup': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/nabil/ros2_ws/install/my_robot_controller:/opt/ros/humble /usr/bin/cmake --build /home/nabil/ros2_ws/build/my_robot_bringup -- -j24 -l24
+[0.327s] Invoked command in '/home/nabil/ros2_ws/build/my_robot_bringup' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/nabil/ros2_ws/install/my_robot_controller:/opt/ros/humble /usr/bin/cmake --build /home/nabil/ros2_ws/build/my_robot_bringup -- -j24 -l24
+[0.335s] Invoking command in '/home/nabil/ros2_ws/build/my_robot_bringup': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/nabil/ros2_ws/install/my_robot_controller:/opt/ros/humble /usr/bin/cmake --install /home/nabil/ros2_ws/build/my_robot_bringup
+[0.338s] -- Install configuration: ""
+[0.338s] -- Execute custom install script
+[0.339s] -- Symlinking: /home/nabil/ros2_ws/install/my_robot_bringup/share/my_robot_bringup//launch/my_robot_gazebo.launch.xml
+[0.342s] -- Symlinking: /home/nabil/ros2_ws/install/my_robot_bringup/share/ament_index/resource_index/package_run_dependencies/my_robot_bringup
+[0.345s] -- Symlinking: /home/nabil/ros2_ws/install/my_robot_bringup/share/ament_index/resource_index/parent_prefix_path/my_robot_bringup
+[0.348s] -- Symlinking: /home/nabil/ros2_ws/install/my_robot_bringup/share/my_robot_bringup/environment/ament_prefix_path.sh
+[0.351s] -- Symlinking: /home/nabil/ros2_ws/install/my_robot_bringup/share/my_robot_bringup/environment/ament_prefix_path.dsv
+[0.354s] -- Symlinking: /home/nabil/ros2_ws/install/my_robot_bringup/share/my_robot_bringup/environment/path.sh
+[0.357s] -- Symlinking: /home/nabil/ros2_ws/install/my_robot_bringup/share/my_robot_bringup/environment/path.dsv
+[0.360s] -- Symlinking: /home/nabil/ros2_ws/install/my_robot_bringup/share/my_robot_bringup/local_setup.bash
+[0.363s] -- Symlinking: /home/nabil/ros2_ws/install/my_robot_bringup/share/my_robot_bringup/local_setup.sh
+[0.366s] -- Symlinking: /home/nabil/ros2_ws/install/my_robot_bringup/share/my_robot_bringup/local_setup.zsh
+[0.369s] -- Symlinking: /home/nabil/ros2_ws/install/my_robot_bringup/share/my_robot_bringup/local_setup.dsv
+[0.372s] -- Symlinking: /home/nabil/ros2_ws/install/my_robot_bringup/share/my_robot_bringup/package.dsv
+[0.375s] -- Symlinking: /home/nabil/ros2_ws/install/my_robot_bringup/share/ament_index/resource_index/packages/my_robot_bringup
+[0.378s] -- Symlinking: /home/nabil/ros2_ws/install/my_robot_bringup/share/my_robot_bringup/cmake/my_robot_bringupConfig.cmake
+[0.381s] -- Symlinking: /home/nabil/ros2_ws/install/my_robot_bringup/share/my_robot_bringup/cmake/my_robot_bringupConfig-version.cmake
+[0.384s] -- Symlinking: /home/nabil/ros2_ws/install/my_robot_bringup/share/my_robot_bringup/package.xml
+[0.388s] Invoked command in '/home/nabil/ros2_ws/build/my_robot_bringup' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/nabil/ros2_ws/install/my_robot_controller:/opt/ros/humble /usr/bin/cmake --install /home/nabil/ros2_ws/build/my_robot_bringup
