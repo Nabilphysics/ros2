@@ -1,0 +1,35 @@
+[0.289s] Invoking command in '/home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2': PYTHONPATH=/home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/prefix_override:/home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --uninstall --editable --build-directory /home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/build
+[0.405s] running develop
+[0.470s] Removing /home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/python3.10/site-packages/urdf-tutorial-r2d2.egg-link (link to .)
+[0.482s] Invoked command in '/home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2' returned '0': PYTHONPATH=/home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/prefix_override:/home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --uninstall --editable --build-directory /home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/build
+[0.482s] Invoking command in '/home/nabil/second_ros2_ws/src/urdf_tutorial_r2d2': PYTHONPATH=/home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/prefix_override:/home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/urdf_tutorial_r2d2 build --build-base /home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/build install --record /home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/install.log --single-version-externally-managed
+[0.589s] running egg_info
+[0.589s] writing ../../build/urdf_tutorial_r2d2/urdf_tutorial_r2d2.egg-info/PKG-INFO
+[0.589s] writing dependency_links to ../../build/urdf_tutorial_r2d2/urdf_tutorial_r2d2.egg-info/dependency_links.txt
+[0.589s] writing entry points to ../../build/urdf_tutorial_r2d2/urdf_tutorial_r2d2.egg-info/entry_points.txt
+[0.590s] writing requirements to ../../build/urdf_tutorial_r2d2/urdf_tutorial_r2d2.egg-info/requires.txt
+[0.590s] writing top-level names to ../../build/urdf_tutorial_r2d2/urdf_tutorial_r2d2.egg-info/top_level.txt
+[0.590s] reading manifest file '../../build/urdf_tutorial_r2d2/urdf_tutorial_r2d2.egg-info/SOURCES.txt'
+[0.590s] adding license file 'LICENSE'
+[0.591s] writing manifest file '../../build/urdf_tutorial_r2d2/urdf_tutorial_r2d2.egg-info/SOURCES.txt'
+[0.591s] running build
+[0.591s] running build_py
+[0.591s] creating /home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/build
+[0.591s] creating /home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/build/lib
+[0.591s] creating /home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/build/lib/urdf_tutorial_r2d2
+[0.591s] copying urdf_tutorial_r2d2/__init__.py -> /home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/build/lib/urdf_tutorial_r2d2
+[0.591s] copying urdf_tutorial_r2d2/state_publisher.py -> /home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/build/lib/urdf_tutorial_r2d2
+[0.591s] running install
+[0.591s] running install_lib
+[0.591s] creating /home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/python3.10/site-packages/urdf_tutorial_r2d2
+[0.591s] copying /home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/build/lib/urdf_tutorial_r2d2/__init__.py -> /home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/python3.10/site-packages/urdf_tutorial_r2d2
+[0.591s] copying /home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/build/lib/urdf_tutorial_r2d2/state_publisher.py -> /home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/python3.10/site-packages/urdf_tutorial_r2d2
+[0.592s] byte-compiling /home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/python3.10/site-packages/urdf_tutorial_r2d2/__init__.py to __init__.cpython-310.pyc
+[0.592s] byte-compiling /home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/python3.10/site-packages/urdf_tutorial_r2d2/state_publisher.py to state_publisher.cpython-310.pyc
+[0.592s] running install_data
+[0.592s] running install_egg_info
+[0.593s] Copying ../../build/urdf_tutorial_r2d2/urdf_tutorial_r2d2.egg-info to /home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/python3.10/site-packages/urdf_tutorial_r2d2-0.0.0-py3.10.egg-info
+[0.593s] running install_scripts
+[0.602s] Installing state_publisher script to /home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/urdf_tutorial_r2d2
+[0.602s] writing list of installed files to '/home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/install.log'
+[0.612s] Invoked command in '/home/nabil/second_ros2_ws/src/urdf_tutorial_r2d2' returned '0': PYTHONPATH=/home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/prefix_override:/home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/urdf_tutorial_r2d2 build --build-base /home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/build install --record /home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/install.log --single-version-externally-managed

@@ -1,0 +1,27 @@
+[0.290s] Invoking command in '/home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2': PYTHONPATH=/home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/prefix_override:/home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --uninstall --editable --build-directory /home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/build
+[0.406s] running develop
+[0.483s] Invoked command in '/home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2' returned '0': PYTHONPATH=/home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/prefix_override:/home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --uninstall --editable --build-directory /home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/build
+[0.483s] Invoking command in '/home/nabil/second_ros2_ws/src/urdf_tutorial_r2d2': PYTHONPATH=/home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/prefix_override:/home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/urdf_tutorial_r2d2 build --build-base /home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/build install --record /home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/install.log --single-version-externally-managed
+[0.591s] running egg_info
+[0.591s] writing ../../build/urdf_tutorial_r2d2/urdf_tutorial_r2d2.egg-info/PKG-INFO
+[0.591s] writing dependency_links to ../../build/urdf_tutorial_r2d2/urdf_tutorial_r2d2.egg-info/dependency_links.txt
+[0.591s] writing entry points to ../../build/urdf_tutorial_r2d2/urdf_tutorial_r2d2.egg-info/entry_points.txt
+[0.591s] writing requirements to ../../build/urdf_tutorial_r2d2/urdf_tutorial_r2d2.egg-info/requires.txt
+[0.591s] writing top-level names to ../../build/urdf_tutorial_r2d2/urdf_tutorial_r2d2.egg-info/top_level.txt
+[0.592s] reading manifest file '../../build/urdf_tutorial_r2d2/urdf_tutorial_r2d2.egg-info/SOURCES.txt'
+[0.592s] adding license file 'LICENSE'
+[0.592s] writing manifest file '../../build/urdf_tutorial_r2d2/urdf_tutorial_r2d2.egg-info/SOURCES.txt'
+[0.592s] running build
+[0.593s] running build_py
+[0.593s] running install
+[0.593s] running install_lib
+[0.593s] running install_data
+[0.593s] copying urdf/r2d2.rviz -> /home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/share/urdf_tutorial_r2d2
+[0.594s] copying urdf/r2d2.urdf.xml -> /home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/share/urdf_tutorial_r2d2
+[0.594s] running install_egg_info
+[0.594s] removing '/home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/python3.10/site-packages/urdf_tutorial_r2d2-0.0.0-py3.10.egg-info' (and everything under it)
+[0.594s] Copying ../../build/urdf_tutorial_r2d2/urdf_tutorial_r2d2.egg-info to /home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/python3.10/site-packages/urdf_tutorial_r2d2-0.0.0-py3.10.egg-info
+[0.595s] running install_scripts
+[0.604s] Installing state_publisher script to /home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/urdf_tutorial_r2d2
+[0.604s] writing list of installed files to '/home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/install.log'
+[0.614s] Invoked command in '/home/nabil/second_ros2_ws/src/urdf_tutorial_r2d2' returned '0': PYTHONPATH=/home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/prefix_override:/home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/urdf_tutorial_r2d2 build --build-base /home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/build install --record /home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/install.log --single-version-externally-managed
