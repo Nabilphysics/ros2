@@ -178,11 +178,11 @@ class DiffTf(Node):
         except KeyboardInterrupt:
             pass
     def rwheelCallback(self, msg):
-        enc = msg.data   
-        print(enc)
+            enc = msg.data   
+            print(enc)
     def lwheelCallback(self, msg):
-        enc = msg.data  
-        print(enc)
+            enc = msg.data  
+            print(enc)    
 '''
     #############################################################################
     def lwheelCallback(self, msg):

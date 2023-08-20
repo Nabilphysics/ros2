@@ -1,3 +1,0 @@
-[console_scripts]
-state_publisher = urdf_tutorial_r2d2.state_publisher:main
-

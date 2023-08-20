@@ -82,7 +82,7 @@ class StatePublisher(Node):
             pass
     def lwheelCallback(self, msg):
             self.enc = msg.data  
-            #print(self.enc)    
+            print(self.enc)    
             self.get_logger().info(" enc: " + str(self.enc))    
 
 def euler_to_quaternion(roll, pitch, yaw):
