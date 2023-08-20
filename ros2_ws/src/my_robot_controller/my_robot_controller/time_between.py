@@ -9,7 +9,8 @@ def main(args=None):
 
     clock = ROSClock()
 
-    print("ROSCLOCK(): "+str((ROSClock().now().to_msg().sec)+(ROSClock().now().to_msg().nanosec)))
+    print("ROSCLOCK(): "+str((ROSClock().now().to_msg().sec)+((ROSClock().now().to_msg().nanosec)/1e9)))
+    print("ROSCLOCK:", ((clock.now().to_msg().sec)+((clock.now().to_msg().nanosec)/1e9)))
     #node.set_parameter(rclpy.parameter.Parameter('use_sim_time', rclpy.ParameterType.BOOL, True))
 
     start_time = clock.now().to_msg()

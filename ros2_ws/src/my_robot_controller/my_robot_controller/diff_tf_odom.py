@@ -55,9 +55,9 @@ class DiffTf(Node):
         
         self.t_delta = 0.1
        
-        self.t_next =  ((ROSClock().now().to_msg().sec)+(ROSClock().now().to_msg().nanosec)) + self.t_delta
-
-        self.get_logger().info("time: " + str(self.t_next))
+        self.t_next =  ((ROSClock().now().to_msg().sec)+((ROSClock().now().to_msg().nanosec)/1e9)) + self.t_delta
+        print("t_next=", self.t_next)
+        #self.get_logger().info("time: " + str(self.t_next))
         
        
         
@@ -76,7 +76,7 @@ class DiffTf(Node):
         self.th = 0
         self.dx = 0                 # speeds in x/rotation
         self.dr = 0
-        self.then = ((ROSClock().now().to_msg().sec)+(ROSClock().now().to_msg().nanosec))
+        self.then = ((ROSClock().now().to_msg().sec)+((ROSClock().now().to_msg().nanosec)/1e9))
         
         # subscriptions
         self.create_subscription(Int16,'lwheel',self.lwheelCallback, 10)
@@ -86,21 +86,27 @@ class DiffTf(Node):
         self.get_logger().info("publisher creater")
         self.odomBroadcaster = TransformBroadcaster(self, qos= qos_profile)
         loop_rate = self.create_rate(10)
+        
 
         try:
             while rclpy.ok():
                 rclpy.spin_once(self)
                 
-                self.get_logger().info("updating")
-                now = ((ROSClock().now().to_msg().sec)+(ROSClock().now().to_msg().nanosec))
+                #self.get_logger().info("updating")
+                now = ((ROSClock().now().to_msg().sec)+((ROSClock().now().to_msg().nanosec)/1e9))
+                print("t_next=", self.t_next)
+                print("Now=", now)
                 
+                
+                    
                 if now > self.t_next:
                     elapsed = now - self.then
-                    self.get_logger().info(" elapsed " + str(elapsed))
+                    #self.get_logger().info(" elapsed " + str(elapsed))
+                    print("elapsed=", elapsed)
                     self.then = now
                     #elapsed = elapsed.to_sec()
                     #elapsed = elapsed
-                    
+                    '''
                     # calculate odometry
                     if self.enc_left == None:
                         d_left = 0
@@ -125,11 +131,15 @@ class DiffTf(Node):
                         x = cos( th ) * d
                         y = -sin( th ) * d
                         # calculate the final position of the robot
+                        # Equation for converting a point in local reference frame to global reference frame
+                        #VxG = (X_local * cos(γ)) – (Y_local * sin(γ)) 
+                        #VyG = (X_local * sin(γ)) + (Y_local * cos(γ))
                         self.x = self.x + ( cos( self.th ) * x - sin( self.th ) * y )
                         self.y = self.y + ( sin( self.th ) * x + cos( self.th ) * y )
                     if( th != 0):
                         self.th = self.th + th
-                        
+                   
+                     
                     # publish the odom information
                     quaternion = Quaternion()
                     quaternion.x = 0.0
@@ -139,7 +149,7 @@ class DiffTf(Node):
                     self.odomBroadcaster.sendTransform(
                         (self.x, self.y, 0),
                         (quaternion.x, quaternion.y, quaternion.z, quaternion.w),
-                        self.get_clock().now(),
+                        self.get_clock().now().to_msg(),
                         self.base_frame_id,
                         self.odom_frame_id
                         )
@@ -156,22 +166,38 @@ class DiffTf(Node):
                     odom.twist.twist.linear.y = 0
                     odom.twist.twist.angular.z = self.dr
                     self.odomPub.publish(odom)
+                    
+                    print("self.x= ", self.x)  
+                    print("self.y= ", self.y)
+                    print("self.th= ", self.th)   
+                    '''
+                    print(" -------- ")
                     loop_rate.sleep()
+                    #print("Loop_Rate",loop_rate.sleep())
 
         except KeyboardInterrupt:
             pass
-
+    def rwheelCallback(self, msg):
+        enc = msg.data   
+        print(enc)
+    def lwheelCallback(self, msg):
+        enc = msg.data  
+        print(enc)
+'''
     #############################################################################
     def lwheelCallback(self, msg):
     #############################################################################
         enc = msg.data
         if (enc < self.encoder_low_wrap and self.prev_lencoder > self.encoder_high_wrap):
             self.lmult = self.lmult + 1
+            print("self.mult.Lwheel+ = ", self.lmult ) 
             
         if (enc > self.encoder_high_wrap and self.prev_lencoder < self.encoder_low_wrap):
             self.lmult = self.lmult - 1
+            print("self.mult.Lwheel- = ", self.lmult ) 
             
         self.left = 1.0 * (enc + self.lmult * (self.encoder_max - self.encoder_min)) 
+        print("self.left= ", self.left) 
         self.prev_lencoder = enc
         
     #############################################################################
@@ -185,8 +211,12 @@ class DiffTf(Node):
             self.rmult = self.rmult - 1
             
         self.right = 1.0 * (enc + self.rmult * (self.encoder_max - self.encoder_min))
+        print("self.right= ", self.right) 
         self.prev_rencoder = enc
+''' 
 
+    
+        
 #############################################################################
 #############################################################################
 
