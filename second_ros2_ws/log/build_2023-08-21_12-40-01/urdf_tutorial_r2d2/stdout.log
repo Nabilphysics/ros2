@@ -1,0 +1,18 @@
+running develop
+running egg_info
+writing urdf_tutorial_r2d2.egg-info/PKG-INFO
+writing dependency_links to urdf_tutorial_r2d2.egg-info/dependency_links.txt
+writing entry points to urdf_tutorial_r2d2.egg-info/entry_points.txt
+writing requirements to urdf_tutorial_r2d2.egg-info/requires.txt
+writing top-level names to urdf_tutorial_r2d2.egg-info/top_level.txt
+reading manifest file 'urdf_tutorial_r2d2.egg-info/SOURCES.txt'
+writing manifest file 'urdf_tutorial_r2d2.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/python3.10/site-packages/urdf-tutorial-r2d2.egg-link (link to .)
+Installing state_publisher script to /home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/urdf_tutorial_r2d2
+Installing state_publisher_fixed script to /home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/urdf_tutorial_r2d2
+Installing state_publisher_v2 script to /home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/urdf_tutorial_r2d2
+
+Installed /home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2
+running install_data
+copying launch/fixed.launch.py -> /home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/share/urdf_tutorial_r2d2/launch

@@ -1,0 +1,20 @@
+[0.294s] Invoking command in '/home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2': PYTHONPATH=/home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/prefix_override:/home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/build --no-deps install_data
+[0.414s] running develop
+[0.481s] running egg_info
+[0.482s] writing urdf_tutorial_r2d2.egg-info/PKG-INFO
+[0.482s] writing dependency_links to urdf_tutorial_r2d2.egg-info/dependency_links.txt
+[0.482s] writing entry points to urdf_tutorial_r2d2.egg-info/entry_points.txt
+[0.482s] writing requirements to urdf_tutorial_r2d2.egg-info/requires.txt
+[0.482s] writing top-level names to urdf_tutorial_r2d2.egg-info/top_level.txt
+[0.482s] reading manifest file 'urdf_tutorial_r2d2.egg-info/SOURCES.txt'
+[0.483s] writing manifest file 'urdf_tutorial_r2d2.egg-info/SOURCES.txt'
+[0.483s] running build_ext
+[0.484s] Creating /home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/python3.10/site-packages/urdf-tutorial-r2d2.egg-link (link to .)
+[0.484s] Installing state_publisher script to /home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/urdf_tutorial_r2d2
+[0.484s] Installing state_publisher_fixed script to /home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/urdf_tutorial_r2d2
+[0.484s] Installing state_publisher_v2 script to /home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/urdf_tutorial_r2d2
+[0.484s] 
+[0.484s] Installed /home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2
+[0.484s] running install_data
+[0.484s] copying launch/fixed.launch.py -> /home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/share/urdf_tutorial_r2d2/launch
+[0.497s] Invoked command in '/home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2' returned '0': PYTHONPATH=/home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/prefix_override:/home/nabil/second_ros2_ws/install/urdf_tutorial_r2d2/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/nabil/second_ros2_ws/build/urdf_tutorial_r2d2/build --no-deps install_data
