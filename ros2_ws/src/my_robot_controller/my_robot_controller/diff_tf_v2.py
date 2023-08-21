@@ -73,8 +73,9 @@ class DiffTf(Node):
         self.odomBroadcaster = TransformBroadcaster(self, qos= qos_profile)
         
         self.odom_trans = TransformStamped()
-        self.odom_trans.header.frame_id = 'odom'
-        self.odom_trans.child_frame_id = 'axis'
+        #self.odom_trans.header.frame_id = 'odom'
+        self.odom_trans.header.frame_id = self.base_frame_id
+        self.odom_trans.child_frame_id = self.odom_frame_id
 
         self.create_timer(0.1, self.update)
     
@@ -158,15 +159,20 @@ class DiffTf(Node):
                 odom.pose.pose.orientation = quaternion
                 odom.child_frame_id = self.base_frame_id
                 odom.twist.twist.linear.x = self.dx
+        
                 odom.twist.twist.linear.y = 0.0
                 odom.twist.twist.angular.z = self.dr
+                
                 self.odomPub.publish(odom)
-               
-                print("self.x= ", self.x)  
-                print("self.y= ", self.y)
-                print("self.th= ", self.th)   
-               
-                print(" -------- ")
+
+                if(self.dx > 0):
+                    print("self.dx= ", self.dx)
+                    print("self.dr= ", self.dr)    
+                    print("self.x= ", self.x)  
+                    print("self.y= ", self.y)
+                    print("self.th= ", self.th)   
+                
+                    print(" -------- ")
       
                
     '''
