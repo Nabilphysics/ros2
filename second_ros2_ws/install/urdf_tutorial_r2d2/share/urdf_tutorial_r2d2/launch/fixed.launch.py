@@ -34,3 +34,4 @@ def generate_launch_description():
             name='state_publisher_fixed',
             output='screen'),
     ])
+#rviz2 -d ~/second_ros2_ws/install/urdf_tutorial_r2d2/share/urdf_tutorial_r2d2/r2d2.rviz

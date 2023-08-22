@@ -12,6 +12,7 @@ from rclpy.qos import QoSProfile
 from sensor_msgs.msg import JointState
 from tf2_ros import TransformBroadcaster, TransformStamped
 from std_msgs.msg import Int16
+from geometry_msgs.msg import Twist
 
 class DiffTf(Node):
     def __init__(self):
@@ -44,10 +45,8 @@ class DiffTf(Node):
         self.t_delta = 0.1
        
         self.t_next =  ((ROSClock().now().to_msg().sec)+((ROSClock().now().to_msg().nanosec)/1e9)) + self.t_delta
-        print("t_next=", self.t_next)
-        #self.get_logger().info("time: " + str(self.t_next))
         
-
+        
         # internal data
         self.enc_left = None        # wheel encoder readings
         self.enc_right = None
@@ -67,6 +66,7 @@ class DiffTf(Node):
         # subscriptions
         self.create_subscription(Int16,'lwheel',self.lwheelCallback, 10)
         self.create_subscription(Int16,'rwheel',self.rwheelCallback, 10)
+        self.create_subscription(Twist,'/cmd_vel',self.twistCallback, 10)
     
         self.odomPub = self.create_publisher(Odometry, 'odom', qos_profile)
         self.get_logger().info("publisher creater")
@@ -77,18 +77,30 @@ class DiffTf(Node):
         self.odom_trans.header.frame_id = self.base_frame_id
         self.odom_trans.child_frame_id = self.odom_frame_id
 
+        self.target_left_wheel_velocity = 0
+        self.target_right_wheel_velocity = 0
+        self.robot_base = 0.3556
+        self.commanded_linear_velocity = 0.0
+        self.commanded_angular_velocity = 0.0
+
         self.create_timer(0.1, self.update)
+        self.create_timer(0.05, self.targetWheelVelocity)
     
+    def targetWheelVelocity(self):
+        
+        self.target_left_wheel_velocity = self.commanded_linear_velocity * 1.0 - ((self.commanded_angular_velocity * self.robot_base)/2)
+        self.target_right_wheel_velocity = self.commanded_linear_velocity * 1.0 + ((self.commanded_angular_velocity * self.robot_base)/2)
+        #print('Target Left Wheel Velocity: ',self.target_left_wheel_velocity) 
+        #print('Target Right Wheel Velocity: ',self.target_right_wheel_velocity) 
+        
     def update(self):
          #self.get_logger().info("updating")
             now = ((ROSClock().now().to_msg().sec)+((ROSClock().now().to_msg().nanosec)/1e9))
-            print("t_next=", self.t_next)
-            print("Now=", now)
-               
+          
             if now > self.t_next:
                 elapsed = now - self.then
                 #self.get_logger().info(" elapsed " + str(elapsed))
-                print("elapsed=", elapsed)
+                
                 self.then = now
                 
                 # calculate odometry
@@ -100,6 +112,8 @@ class DiffTf(Node):
                     d_right = (self.right - self.enc_right) / self.ticks_meter
                 self.enc_left = self.left
                 self.enc_right = self.right
+                print('enc_left:', self.enc_left)
+                print('enc_right:', self.enc_right)
             
                 # distance traveled is the average of the two wheels 
                 d = ( d_left + d_right ) / 2
@@ -124,7 +138,7 @@ class DiffTf(Node):
                     self.th = self.th + th
                 
 
-                #publish odom information
+                #publish odom transform information
                 self.odom_trans.header.stamp = self.get_clock().now().to_msg()
                 self.odom_trans.transform.translation.x = self.x
                 self.odom_trans.transform.translation.y = self.y
@@ -166,12 +180,13 @@ class DiffTf(Node):
                 self.odomPub.publish(odom)
 
                 if(self.dx > 0):
+                    print("elapsed=", elapsed)
                     print("self.dx= ", self.dx)
                     print("self.dr= ", self.dr)    
                     print("self.x= ", self.x)  
                     print("self.y= ", self.y)
                     print("self.th= ", self.th)   
-                
+
                     print(" -------- ")
       
                
@@ -184,9 +199,9 @@ class DiffTf(Node):
             print('lwheel_enc:',enc)  
     '''
 
-    #############################################################################
+  
     def lwheelCallback(self, msg):
-    #############################################################################
+
         enc = msg.data
         if (enc < self.encoder_low_wrap and self.prev_lencoder > self.encoder_high_wrap):
             self.lmult = self.lmult + 1
@@ -200,9 +215,9 @@ class DiffTf(Node):
         print("self.left= ", self.left) 
         self.prev_lencoder = enc
         
-    #############################################################################
+
     def rwheelCallback(self, msg):
-    #############################################################################
+
         enc = msg.data
         if(enc < self.encoder_low_wrap and self.prev_rencoder > self.encoder_high_wrap):
             self.rmult = self.rmult + 1
@@ -213,6 +228,13 @@ class DiffTf(Node):
         self.right = 1.0 * (enc + self.rmult * (self.encoder_max - self.encoder_min))
         print("self.right= ", self.right) 
         self.prev_rencoder = enc
+
+    def twistCallback(self, msg = Twist):
+        self.commanded_linear_velocity = msg.linear.x
+        self.commanded_angular_velocity = msg.angular.z
+
+        #print('Com_linear_velocity: ', self.commanded_linear_velocity )
+        #print('Com_angular_velocity: ',self.commanded_angular_velocity)
 
 def euler_to_quaternion(roll, pitch, yaw):
     qx = sin(roll/2) * cos(pitch/2) * cos(yaw/2) - cos(roll/2) * sin(pitch/2) * sin(yaw/2)

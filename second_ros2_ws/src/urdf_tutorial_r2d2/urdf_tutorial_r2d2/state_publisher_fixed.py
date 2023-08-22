@@ -35,6 +35,7 @@ class StatePublisher(Node):
 
         self.joint_state = JointState()
         self.joint_state.name = ['swivel', 'tilt', 'periscope']
+    
 
         self.swivel_position = 1.57
         self.tile_position = 1.0
