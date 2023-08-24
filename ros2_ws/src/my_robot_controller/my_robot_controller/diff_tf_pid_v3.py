@@ -17,7 +17,7 @@ from geometry_msgs.msg import Twist
 
 class DiffTf(Node):
     def __init__(self):
-        super().__init__('diff_tf_v2')
+        super().__init__('diff_tf_pid_v3')
         qos_profile = QoSProfile(depth=10)
         
         self.nodename = self.get_name()
@@ -62,6 +62,25 @@ class DiffTf(Node):
         self.th = 0.0
         self.dx = 0                 # speeds in x/rotation
         self.dr = 0
+        self.left_wheel_velocity = 0.0
+        self.right_wheel_velocity = 0.0
+        # PID Related Variable
+        self.left_wheel_error = 0.0
+        self.right_wheel_error = 0.0
+        self.left_integral = 0.0
+        self.right_integral = 0.0
+        self.left_derivative = 0.0
+        self.right_derivative = 0.0
+        self.previous_left_error = 0.0
+        self.previous_right_error = 0.0
+        self.applied_left_wheel_pwm = 0.0
+        self.applied_right_wheel_pwm = 0.0
+        self.left_wheel_Kp = 1.0
+        self.left_wheel_Ki = 1.0
+        self.left_wheel_Kd = 1.0
+
+        
+
         self.then = ((ROSClock().now().to_msg().sec)+((ROSClock().now().to_msg().nanosec)/1e9))
         
         # subscriptions
@@ -113,16 +132,34 @@ class DiffTf(Node):
                     d_right = (self.right - self.enc_right) / self.ticks_meter
                 self.enc_left = self.left
                 self.enc_right = self.right
-                print('enc_left:', self.enc_left)
-                print('enc_right:', self.enc_right)
+                #print('enc_left:', self.enc_left)
+                #print('enc_right:', self.enc_right)
             
                 # distance traveled is the average of the two wheels 
                 d = ( d_left + d_right ) / 2
                 # this approximation works (in radians) for small angles
                 th = ( d_right - d_left ) / self.base_width
                 # calculate velocities
+                self.left_wheel_velocity = d_left/elapsed
+                self.right_wheel_velocity = d_right/elapsed
                 self.dx = d / elapsed
                 self.dr = th / elapsed
+
+                self.left_wheel_error = self.target_left_wheel_velocity - self.left_wheel_velocity
+                self.left_integral = self.left_integral + (self.left_wheel_error * elapsed)
+                self.left_derivative = (self.left_wheel_error - self.previous_left_error)/elapsed
+                self.previous_left_error = self.left_wheel_error
+                self.applied_left_wheel_pwm = (self.left_wheel_Kp * self.left_wheel_error) + (self.left_wheel_Ki * self.left_integral) + (self.left_wheel_Kd * self.left_derivative)
+                
+                self.right_wheel_error = self.target_right_wheel_velocity - self.right_wheel_velocity
+                self.right_integral = self.right_integral + (self.right_wheel_error * elapsed)
+                self.right_derivative = (self.right_wheel_error - self.previous_right_error)/elapsed
+                self.previous_right_error = self.right_wheel_error
+
+
+
+
+
             
                 
                 if (d != 0):
@@ -187,7 +224,8 @@ class DiffTf(Node):
                     print("self.x= ", self.x)  
                     print("self.y= ", self.y)
                     print("self.th= ", self.th)   
-
+                    print("Left Wheel Velocity= ", self.left_wheel_velocity)
+                    print("Right Wheel Velocity= ", self.right_wheel_velocity)
                     print(" -------- ")
       
                
@@ -213,7 +251,7 @@ class DiffTf(Node):
             print("self.mult.Lwheel- = ", self.lmult ) 
             
         self.left = 1.0 * (enc + self.lmult * (self.encoder_max - self.encoder_min)) 
-        print("self.left= ", self.left) 
+        #print("self.left= ", self.left) 
         self.prev_lencoder = enc
         
 
@@ -227,7 +265,7 @@ class DiffTf(Node):
             self.rmult = self.rmult - 1
             
         self.right = 1.0 * (enc + self.rmult * (self.encoder_max - self.encoder_min))
-        print("self.right= ", self.right) 
+        #print("self.right= ", self.right) 
         self.prev_rencoder = enc
 
     def twistCallback(self, msg = Twist):

@@ -10,6 +10,8 @@ setup.py
 ../../build/my_robot_controller/my_robot_controller.egg-info/zip-safe
 my_robot_controller/__init__.py
 my_robot_controller/diff_tf_odom.py
+my_robot_controller/diff_tf_pid_v3.py
+my_robot_controller/diff_tf_v2.py
 my_robot_controller/led_control_simple.py
 my_robot_controller/led_state_reader.py
 my_robot_controller/time_between.py
