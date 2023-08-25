@@ -19,10 +19,8 @@ class DiffTf(Node):
     def __init__(self):
         super().__init__('diff_tf_pid_v3')
         qos_profile = QoSProfile(depth=10)
-        
         self.nodename = self.get_name()
         self.get_logger().info("-I- %s started" % self.nodename)
-        
         #### parameters #######
         #self.rate = self.get_parameter("~rate",10.0)  # the rate at which to publish the transform
         self.rate = 10.0
@@ -42,11 +40,8 @@ class DiffTf(Node):
         self.encoder_low_wrap = ((self.encoder_max - self.encoder_min) * 0.3 + self.encoder_min) 
         #self.encoder_high_wrap = self.get_parameter('wheel_high_wrap', (self.encoder_max - self.encoder_min) * 0.7 + self.encoder_min )
         self.encoder_high_wrap = ((self.encoder_max - self.encoder_min) * 0.7 + self.encoder_min )
-        
-        self.t_delta = 0.1
-       
+        self.t_delta = 0.01
         self.t_next =  ((ROSClock().now().to_msg().sec)+((ROSClock().now().to_msg().nanosec)/1e9)) + self.t_delta
-        
         
         # internal data
         self.enc_left = None        # wheel encoder readings
@@ -62,25 +57,32 @@ class DiffTf(Node):
         self.th = 0.0
         self.dx = 0                 # speeds in x/rotation
         self.dr = 0
-        self.left_wheel_velocity = 0.0
-        self.right_wheel_velocity = 0.0
-        # PID Related Variable
-        self.left_wheel_error = 0.0
-        self.right_wheel_error = 0.0
+        self.current_left_wheel_velocity = 0.0
+        self.current_right_wheel_velocity = 0.0
+        #Simulated
+        self.simulated_velocity = 0
+        # PID Related Left Wheel Variable
+        self.left_wheel_error = 0.0 
         self.left_integral = 0.0
-        self.right_integral = 0.0
         self.left_derivative = 0.0
-        self.right_derivative = 0.0
         self.previous_left_error = 0.0
-        self.previous_right_error = 0.0
         self.applied_left_wheel_pwm = 0.0
-        self.applied_right_wheel_pwm = 0.0
         self.left_wheel_Kp = 1.0
-        self.left_wheel_Ki = 1.0
-        self.left_wheel_Kd = 1.0
-
-        
-
+        self.left_wheel_Ki = 0.5
+        self.left_wheel_Kd = 2.0
+        self.left_highest_pwm = 255.0
+        self.left_lowest_pwm = 20.0
+        # PID Related Right Wheel Variable
+        self.right_wheel_error = 0.0        
+        self.right_integral = 0.0        
+        self.right_derivative = 0.0        
+        self.previous_right_error = 0.0       
+        self.applied_right_wheel_pwm = 0.0
+        self.right_wheel_Kp = 1.0
+        self.right_wheel_Ki = 0.5
+        self.right_wheel_Kd = 2.0
+        self.right_highest_pwm = 255
+        self.right_lowest_pwm = 20
         self.then = ((ROSClock().now().to_msg().sec)+((ROSClock().now().to_msg().nanosec)/1e9))
         
         # subscriptions
@@ -114,15 +116,10 @@ class DiffTf(Node):
         #print('Target Right Wheel Velocity: ',self.target_right_wheel_velocity) 
         
     def update(self):
-         #self.get_logger().info("updating")
             now = ((ROSClock().now().to_msg().sec)+((ROSClock().now().to_msg().nanosec)/1e9))
-          
             if now > self.t_next:
                 elapsed = now - self.then
-                #self.get_logger().info(" elapsed " + str(elapsed))
-                
                 self.then = now
-                
                 # calculate odometry
                 if self.enc_left == None:
                     d_left = 0
@@ -134,34 +131,61 @@ class DiffTf(Node):
                 self.enc_right = self.right
                 #print('enc_left:', self.enc_left)
                 #print('enc_right:', self.enc_right)
-            
                 # distance traveled is the average of the two wheels 
                 d = ( d_left + d_right ) / 2
                 # this approximation works (in radians) for small angles
                 th = ( d_right - d_left ) / self.base_width
                 # calculate velocities
-                self.left_wheel_velocity = d_left/elapsed
-                self.right_wheel_velocity = d_right/elapsed
+                self.current_left_wheel_velocity = d_left/elapsed
+                self.current_right_wheel_velocity = d_right/elapsed
                 self.dx = d / elapsed
                 self.dr = th / elapsed
 
-                self.left_wheel_error = self.target_left_wheel_velocity - self.left_wheel_velocity
-                self.left_integral = self.left_integral + (self.left_wheel_error * elapsed)
+
+                #Left Wheel PID : TODO: Make a Separate Class for PID
+                self.left_wheel_error = abs(self.target_left_wheel_velocity) - abs(self.current_left_wheel_velocity)
+                #self.left_wheel_error = abs(self.target_current_left_wheel_velocity) - abs(self.simulated_velocity)
+                self.left_integral = self.left_integral + (self.left_wheel_error * self.left_wheel_Ki* elapsed)
+                
+                if(self.left_integral > self.left_highest_pwm):
+                    self.left_integral = self.left_highest_pwm
+                elif(self.left_integral < self.left_lowest_pwm):
+                    self.left_integral = self.left_lowest_pwm
+               
                 self.left_derivative = (self.left_wheel_error - self.previous_left_error)/elapsed
-                self.previous_left_error = self.left_wheel_error
-                self.applied_left_wheel_pwm = (self.left_wheel_Kp * self.left_wheel_error) + (self.left_wheel_Ki * self.left_integral) + (self.left_wheel_Kd * self.left_derivative)
-                
-                self.right_wheel_error = self.target_right_wheel_velocity - self.right_wheel_velocity
-                self.right_integral = self.right_integral + (self.right_wheel_error * elapsed)
+                self.applied_left_wheel_pwm = (self.left_wheel_Kp * self.left_wheel_error) + (self.left_integral) + (self.left_wheel_Kd * self.left_derivative)
+               
+                if self.applied_left_wheel_pwm > self.left_highest_pwm:
+                    self.applied_left_wheel_pwm = self.left_highest_pwm
+                elif self.applied_left_wheel_pwm < self.left_lowest_pwm:
+                    self.applied_left_wheel_pwm = self.left_lowest_pwm
+                if self.target_left_wheel_velocity == 0.0:
+                    self.applied_left_wheel_pwm = 0
+                    self.left_integral = 0.0
+                self.previous_left_error = self.left_wheel_error  
+                print('Left_Error:',self.left_wheel_error,' Left_Apl_PWM: ',self.applied_left_wheel_pwm, ' Target_L_Vel:',self.target_left_wheel_velocity, ' Curr_L_Vel:',self.current_left_wheel_velocity,' Integral_L:',self.left_integral)
+
+                # Right Wheel PID
+                self.right_wheel_error = abs(self.target_right_wheel_velocity) - abs(self.current_right_wheel_velocity)
+                self.right_integral = self.right_integral + (self.right_wheel_error * self.right_wheel_Ki * elapsed)
+                if(self.right_integral > self.right_highest_pwm):
+                    self.right_integral = self.right_highest_pwm
+                elif(self.right_integral < self.right_lowest_pwm):
+                    self.right_integral = self.right_lowest_pwm
+
                 self.right_derivative = (self.right_wheel_error - self.previous_right_error)/elapsed
-                self.previous_right_error = self.right_wheel_error
-
-
-
-
-
-            
                 
+                self.applied_right_wheel_pwm = (self.right_wheel_Kp * self.right_wheel_error) + (self.right_integral) + (self.right_wheel_Kd * self.right_derivative)
+                if self.applied_right_wheel_pwm > self.right_highest_pwm:
+                    self.applied_right_wheel_pwm = self.right_highest_pwm
+                if self.applied_right_wheel_pwm < self.right_lowest_pwm:
+                    self.applied_right_wheel_pwm = self.right_lowest_pwm
+                if self.target_right_wheel_velocity == 0.0:
+                    self.applied_right_wheel_pwm = 0
+                    self.right_integral = 0.0
+                self.previous_right_error = self.right_wheel_error
+                print('Right_Error:',self.right_wheel_error,' Right_Apl_PWM: ',self.applied_right_wheel_pwm, ' Target_R_Vel:',self.target_right_wheel_velocity, ' Curr_R_Vel:',self.current_right_wheel_velocity,' Integral_R:',self.right_integral)
+
                 if (d != 0):
                     # calculate distance traveled in x and y
                     x = cos( th ) * d
@@ -185,8 +209,7 @@ class DiffTf(Node):
 
                 # send the joint state and transform
                 self.odomBroadcaster.sendTransform(self.odom_trans)
-
-               
+              
                 # publish the odom information
                 quaternion = Quaternion()
                 quaternion.x = 0.0
@@ -219,26 +242,20 @@ class DiffTf(Node):
 
                 if(self.dx > 0):
                     print("elapsed=", elapsed)
-                    print("self.dx= ", self.dx)
-                    print("self.dr= ", self.dr)    
-                    print("self.x= ", self.x)  
-                    print("self.y= ", self.y)
-                    print("self.th= ", self.th)   
-                    print("Left Wheel Velocity= ", self.left_wheel_velocity)
-                    print("Right Wheel Velocity= ", self.right_wheel_velocity)
+                    #print("self.dx= ", self.dx)
+                    #print("self.dr= ", self.dr)    
+                    #print("self.x= ", self.x)  
+                    #print("self.y= ", self.y)
+                    #print("self.th= ", self.th)   
+                    print("Left Wheel Error= ", self.left_wheel_error)
+                    print("Left Wheel Velocity= ", self.current_left_wheel_velocity)
+                    print("Left Wheel PWM= ", self.applied_left_wheel_pwm)
+                
+                    print("Command Velocity: ",self.commanded_linear_velocity)
+                    print("Target Left Wheel Velocity: ",self.target_left_wheel_velocity)
+                    
                     print(" -------- ")
-      
-               
-    '''
-    def rwheelCallback(self, msg):
-            enc = msg.data   
-            print('rwheel_enc:',enc)
-    def lwheelCallback(self, msg):
-            enc = msg.data  
-            print('lwheel_enc:',enc)  
-    '''
-
-  
+             
     def lwheelCallback(self, msg):
 
         enc = msg.data
@@ -254,7 +271,6 @@ class DiffTf(Node):
         #print("self.left= ", self.left) 
         self.prev_lencoder = enc
         
-
     def rwheelCallback(self, msg):
 
         enc = msg.data
@@ -271,6 +287,7 @@ class DiffTf(Node):
     def twistCallback(self, msg = Twist):
         self.commanded_linear_velocity = msg.linear.x
         self.commanded_angular_velocity = msg.angular.z
+        self.simulated_velocity = msg.linear.y
 
         #print('Com_linear_velocity: ', self.commanded_linear_velocity )
         #print('Com_angular_velocity: ',self.commanded_angular_velocity)
