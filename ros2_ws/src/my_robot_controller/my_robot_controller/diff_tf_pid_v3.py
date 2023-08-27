@@ -14,6 +14,8 @@ from sensor_msgs.msg import JointState
 from tf2_ros import TransformBroadcaster, TransformStamped
 from std_msgs.msg import Int16
 from geometry_msgs.msg import Twist
+import serial
+ser = serial.Serial('/dev/ttyACM0', 115200, timeout=1)
 
 class DiffTf(Node):
     def __init__(self):
@@ -107,7 +109,34 @@ class DiffTf(Node):
 
         self.create_timer(0.1, self.update)
         self.create_timer(0.05, self.targetWheelVelocity)
+        self.create_timer(0.0001, self.serialReceive)
     
+    def serialReceive(self):
+        
+        
+        serial_raw = ser.readline()
+        print(serial_raw)
+        serial_decode = serial_raw.decode("utf-8","ignore")
+        #print(serial_decode)
+        serial_split = serial_decode.split(",")
+        sp1 = 0
+        sp2 = 0
+        try:
+            sp1 = int(serial_split[0])
+            sp2 = int(serial_split[1])
+        except:
+            pass
+        if(sp1 > 200):
+            led_state = "h"
+            ser.write(bytes(led_state, 'utf-8'))
+        if(sp1 < 200):
+            led_state = "l"
+            ser.write(bytes(led_state, 'utf-8'))
+
+        print(sp1)
+        print(sp2)
+
+
     def targetWheelVelocity(self):
         
         self.target_left_wheel_velocity = self.commanded_linear_velocity * 1.0 - ((self.commanded_angular_velocity * self.robot_base)/2)
@@ -246,14 +275,7 @@ class DiffTf(Node):
                     #print("self.dr= ", self.dr)    
                     #print("self.x= ", self.x)  
                     #print("self.y= ", self.y)
-                    #print("self.th= ", self.th)   
-                    print("Left Wheel Error= ", self.left_wheel_error)
-                    print("Left Wheel Velocity= ", self.current_left_wheel_velocity)
-                    print("Left Wheel PWM= ", self.applied_left_wheel_pwm)
-                
-                    print("Command Velocity: ",self.commanded_linear_velocity)
-                    print("Target Left Wheel Velocity: ",self.target_left_wheel_velocity)
-                    
+                    #print("self.th= ", self.th)       
                     print(" -------- ")
              
     def lwheelCallback(self, msg):
