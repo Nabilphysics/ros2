@@ -126,13 +126,8 @@ class DiffTf(Node):
             sp2 = int(serial_split[1])
         except:
             pass
-        if(sp1 > 200):
-            led_state = "h"
-            ser.write(bytes(led_state, 'utf-8'))
-        if(sp1 < 200):
-            led_state = "l"
-            ser.write(bytes(led_state, 'utf-8'))
-
+        
+        #ser.write(bytes("From ROS to Arduino \n", 'utf-8'))
         print(sp1)
         print(sp2)
 
@@ -192,6 +187,12 @@ class DiffTf(Node):
                     self.applied_left_wheel_pwm = 0
                     self.left_integral = 0.0
                 self.previous_left_error = self.left_wheel_error  
+                if(self.target_left_wheel_velocity > 0.0):
+                    forward_left_wheel_direction = 'F'
+                if(self.target_left_wheel_velocity < 0.0):
+                    forward_left_wheel_direction = 'R'
+                if(self.target_left_wheel_velocity == 0.0):
+                    forward_left_wheel_direction = 'S'   
                 print('Left_Error:',self.left_wheel_error,' Left_Apl_PWM: ',self.applied_left_wheel_pwm, ' Target_L_Vel:',self.target_left_wheel_velocity, ' Curr_L_Vel:',self.current_left_wheel_velocity,' Integral_L:',self.left_integral)
 
                 # Right Wheel PID
@@ -213,8 +214,22 @@ class DiffTf(Node):
                     self.applied_right_wheel_pwm = 0
                     self.right_integral = 0.0
                 self.previous_right_error = self.right_wheel_error
+                if(self.target_right_wheel_velocity > 0.0):
+                    forward_right_wheel_direction = 'F'
+                if(self.target_right_wheel_velocity < 0.0):
+                    forward_right_wheel_direction = 'R'
+                if(self.target_right_wheel_velocity == 0.0):
+                    forward_right_wheel_direction = 'S'  
                 print('Right_Error:',self.right_wheel_error,' Right_Apl_PWM: ',self.applied_right_wheel_pwm, ' Target_R_Vel:',self.target_right_wheel_velocity, ' Curr_R_Vel:',self.current_right_wheel_velocity,' Integral_R:',self.right_integral)
-
+                
+                
+                #Send to Arduino Serial - Data Format
+                #Left_Forward_Motor_Direction:PWM:Rigit_Forward_Motor_Direction:PWM
+                send_data = forward_left_wheel_direction + str(int(self.applied_left_wheel_pwm)).zfill(3) + forward_right_wheel_direction + str(int(self.applied_right_wheel_pwm)).zfill(3) + '\n'
+                ser.write(bytes(send_data, 'utf-8'))
+                #ser.write(send_data.encode())
+               
+                
                 if (d != 0):
                     # calculate distance traveled in x and y
                     x = cos( th ) * d
