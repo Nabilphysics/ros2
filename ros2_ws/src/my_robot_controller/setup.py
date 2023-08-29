@@ -23,8 +23,9 @@ setup(
             "led_control_simple = my_robot_controller.led_control_simple:main",
             "led_state_reader = my_robot_controller.led_state_reader:main",
             "diff_tf = my_robot_controller.diff_tf_odom:main",
-            "diff_tf_v2 = my_robot_controller.diff_tf_v2",
-            "diff_tf_pid_v3 = my_robot_controller.diff_tf_pid_v3" 
+            "diff_tf_v2 = my_robot_controller.diff_tf_v2:main",
+            "diff_tf_pid_v3 = my_robot_controller.diff_tf_pid_v3:main",
+            "diff_tf_pid_v4 = my_robot_controller.diff_tf_pid_v4:main"
            
         ],
     },

@@ -1,0 +1,21 @@
+[0.289s] Invoking command in '/home/nabil/ros2_ws/build/my_robot_controller': PYTHONPATH=/home/nabil/ros2_ws/build/my_robot_controller/prefix_override:/home/nabil/ros2_ws/install/my_robot_controller/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/nabil/ros2_ws/build/my_robot_controller/build --no-deps install_data
+[0.402s] running develop
+[0.468s] running egg_info
+[0.468s] writing my_robot_controller.egg-info/PKG-INFO
+[0.468s] writing dependency_links to my_robot_controller.egg-info/dependency_links.txt
+[0.468s] writing entry points to my_robot_controller.egg-info/entry_points.txt
+[0.468s] writing requirements to my_robot_controller.egg-info/requires.txt
+[0.468s] writing top-level names to my_robot_controller.egg-info/top_level.txt
+[0.469s] reading manifest file 'my_robot_controller.egg-info/SOURCES.txt'
+[0.469s] writing manifest file 'my_robot_controller.egg-info/SOURCES.txt'
+[0.470s] running build_ext
+[0.470s] Creating /home/nabil/ros2_ws/install/my_robot_controller/lib/python3.10/site-packages/my-robot-controller.egg-link (link to .)
+[0.470s] Installing diff_tf script to /home/nabil/ros2_ws/install/my_robot_controller/lib/my_robot_controller
+[0.470s] Installing diff_tf_pid_v3 script to /home/nabil/ros2_ws/install/my_robot_controller/lib/my_robot_controller
+[0.470s] Installing diff_tf_v2 script to /home/nabil/ros2_ws/install/my_robot_controller/lib/my_robot_controller
+[0.470s] Installing led_control_simple script to /home/nabil/ros2_ws/install/my_robot_controller/lib/my_robot_controller
+[0.470s] Installing led_state_reader script to /home/nabil/ros2_ws/install/my_robot_controller/lib/my_robot_controller
+[0.470s] 
+[0.470s] Installed /home/nabil/ros2_ws/build/my_robot_controller
+[0.470s] running install_data
+[0.484s] Invoked command in '/home/nabil/ros2_ws/build/my_robot_controller' returned '0': PYTHONPATH=/home/nabil/ros2_ws/build/my_robot_controller/prefix_override:/home/nabil/ros2_ws/install/my_robot_controller/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/nabil/ros2_ws/build/my_robot_controller/build --no-deps install_data

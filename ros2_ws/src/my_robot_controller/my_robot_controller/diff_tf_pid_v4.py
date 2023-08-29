@@ -19,7 +19,7 @@ ser = serial.Serial('/dev/ttyACM1', 115200, timeout=1)
 
 class DiffTf(Node):
     def __init__(self):
-        super().__init__('diff_tf_pid_v3')
+        super().__init__('diff_tf_pid_v4')
         qos_profile = QoSProfile(depth=10)
         self.nodename = self.get_name()
         self.get_logger().info("-I- %s started" % self.nodename)
@@ -69,9 +69,9 @@ class DiffTf(Node):
         self.left_derivative = 0.0
         self.previous_left_error = 0.0
         self.applied_left_wheel_pwm = 0.0
-        self.left_wheel_Kp = 1.0
-        self.left_wheel_Ki = 0.5
-        self.left_wheel_Kd = 2.0
+        self.left_wheel_Kp = 50.0
+        self.left_wheel_Ki = 0.0
+        self.left_wheel_Kd = 0.0
         self.left_highest_pwm = 255.0
         self.left_lowest_pwm = 20.0
         # PID Related Right Wheel Variable
@@ -80,9 +80,9 @@ class DiffTf(Node):
         self.right_derivative = 0.0        
         self.previous_right_error = 0.0       
         self.applied_right_wheel_pwm = 0.0
-        self.right_wheel_Kp = 1.0
-        self.right_wheel_Ki = 0.5
-        self.right_wheel_Kd = 2.0
+        self.right_wheel_Kp = 50.0
+        self.right_wheel_Ki = 0.0
+        self.right_wheel_Kd = 0.0
         self.right_highest_pwm = 255
         self.right_lowest_pwm = 20
         # ----- Encoder Raw Data to Tick Conversion Related Variable -- Start
@@ -133,7 +133,7 @@ class DiffTf(Node):
     
     def serialReceive(self):
         serial_raw = ser.readline()
-        print(serial_raw)
+        #print(serial_raw)
         serial_decode = serial_raw.decode("utf-8","ignore")
         #print(serial_decode) position 0 = right encoder raw value, 1 = left Encoder Raw Value
         serial_split = serial_decode.split(",")
@@ -143,8 +143,8 @@ class DiffTf(Node):
         except:
             pass
         
-        print(self.right_encoder_rawValue_current)
-        print(self.left_encoder_rawValue_current)
+        #print(self.right_encoder_rawValue_current)
+        #print(self.left_encoder_rawValue_current)
         # TODO: Make a Separate Class of Function for this calculation
         # -------------- Left Encoder Raw value to Tick Converter ----------------
         #Rotatin Negative Direction (Anti Clockwise)
@@ -349,7 +349,7 @@ class DiffTf(Node):
                 self.odomPub.publish(odom)
 
                 if(self.dx > 0):
-                    print("elapsed=", elapsed)
+                    #print("elapsed=", elapsed)
                     #print("self.dx= ", self.dx)
                     #print("self.dr= ", self.dr)    
                     #print("self.x= ", self.x)  
@@ -360,7 +360,7 @@ class DiffTf(Node):
     def lwheelCallback(self, msg):
 
         enc = msg
-        print("ENC lwheelCallback",enc)
+        #print("ENC lwheelCallback",enc)
         if (enc < self.encoder_low_wrap and self.prev_lencoder > self.encoder_high_wrap):
             self.lmult = self.lmult + 1
             print("self.mult.Lwheel+ = ", self.lmult ) 
@@ -370,13 +370,13 @@ class DiffTf(Node):
             print("self.mult.Lwheel- = ", self.lmult ) 
             
         self.left = 1.0 * (enc + self.lmult * (self.encoder_max - self.encoder_min)) 
-        print("ENC lwheelCallback : self.left= ", self.left) 
+        #print("ENC lwheelCallback : self.left= ", self.left) 
         self.prev_lencoder = enc
         
     def rwheelCallback(self, msg):
 
         enc = msg
-        print("ENC RwheelCallback",enc)
+        #print("ENC RwheelCallback",enc)
         if(enc < self.encoder_low_wrap and self.prev_rencoder > self.encoder_high_wrap):
             self.rmult = self.rmult + 1
         
@@ -384,7 +384,7 @@ class DiffTf(Node):
             self.rmult = self.rmult - 1
             
         self.right = 1.0 * (enc + self.rmult * (self.encoder_max - self.encoder_min))
-        print("ENC RwheelCallback : self.right= ", self.right) 
+        #print("ENC RwheelCallback : self.right= ", self.right) 
         self.prev_rencoder = enc
 
     def twistCallback(self, msg = Twist):
