@@ -15,7 +15,7 @@ from tf2_ros import TransformBroadcaster, TransformStamped
 from std_msgs.msg import Int16
 from geometry_msgs.msg import Twist
 import serial
-ser = serial.Serial('/dev/ttyACM1', 115200, timeout=1)
+ser = serial.Serial('/dev/ttyACM0', 115200, timeout=1)
 
 class DiffTf(Node):
     def __init__(self):
@@ -27,7 +27,7 @@ class DiffTf(Node):
         #self.rate = self.get_parameter("~rate",10.0)  # the rate at which to publish the transform
         self.rate = 10.0
         #self.ticks_meter = float(self.get_parameter('ticks_meter', 250))  # The number of wheel encoder ticks per meter of travel
-        self.ticks_meter = 400
+        self.ticks_meter = 14650
         #self.base_width = float(self.get_parameter('~base_width', 1.3)) # The wheel base width in meters
         self.base_width = 1.3
         #self.base_frame_id = self.get_parameter('~base_frame_id','base_link') # the name of the base frame of the robot
@@ -69,7 +69,7 @@ class DiffTf(Node):
         self.left_derivative = 0.0
         self.previous_left_error = 0.0
         self.applied_left_wheel_pwm = 0.0
-        self.left_wheel_Kp = 50.0
+        self.left_wheel_Kp = 150.0
         self.left_wheel_Ki = 0.0
         self.left_wheel_Kd = 0.0
         self.left_highest_pwm = 255.0
@@ -80,7 +80,7 @@ class DiffTf(Node):
         self.right_derivative = 0.0        
         self.previous_right_error = 0.0       
         self.applied_right_wheel_pwm = 0.0
-        self.right_wheel_Kp = 50.0
+        self.right_wheel_Kp = 150.0
         self.right_wheel_Ki = 0.0
         self.right_wheel_Kd = 0.0
         self.right_highest_pwm = 255
@@ -88,20 +88,23 @@ class DiffTf(Node):
         # ----- Encoder Raw Data to Tick Conversion Related Variable -- Start
         self.all_encoder_change_detect_resolution = 1.0 # After this change of raw(analog or degree) value tick will be counted 
         self.all_encoder_tick_counter_resolution = 1.0 # Tick count will be increased or decreased according to this. e.g. if 1 then after 200 tick count will be 201
-        self.all_encoder_tick_higest = 32768
+        self.all_encoder_tick_highest = 32768
         self.all_encoder_tick_lowest = -32768
+        
 
         self.left_encoder_rawValue_highest = 1023.0
         self.left_encoder_rawValue_lowest = 0.0
         self.left_encoder_rawValue_current = 0.0
         self.left_encoder_rawValue_previous = 0.0
         self.left_encoder_tick = 0
+        self.left_first_cycle_flag = True
     
         self.right_encoder_rawValue_highest = 1023.0
         self.right_encoder_rawValue_lowest = 0.0
         self.right_encoder_rawValue_current = 0.0
         self.right_encoder_rawValue_previous = 0.0
         self.right_encoder_tick = 0
+        self.right_first_cycle_flag = True
         # ----- Encoder Raw Data to Tick Conversion Related Variable -- END
 
         self.then = ((ROSClock().now().to_msg().sec)+((ROSClock().now().to_msg().nanosec)/1e9))
@@ -122,7 +125,7 @@ class DiffTf(Node):
 
         self.target_left_wheel_velocity = 0
         self.target_right_wheel_velocity = 0
-        self.robot_base = 0.3556
+        self.robot_base = 0.38
         self.commanded_linear_velocity = 0.0
         self.commanded_angular_velocity = 0.0
         
@@ -134,15 +137,17 @@ class DiffTf(Node):
     def serialReceive(self):
         serial_raw = ser.readline()
         #print(serial_raw)
-        serial_decode = serial_raw.decode("utf-8","ignore")
-        #print(serial_decode) position 0 = right encoder raw value, 1 = left Encoder Raw Value
-        serial_split = serial_decode.split(",")
         try:
+            serial_decode = serial_raw.decode("utf-8","ignore")
+            #print(serial_decode) position 0 = right encoder raw value, 1 = left Encoder Raw Value
+            serial_split = serial_decode.split(",")
+        
             self.right_encoder_rawValue_current = float(serial_split[0])
             self.left_encoder_rawValue_current = float(serial_split[1])
+            
         except:
             pass
-        
+        #print('L - R Raw: ',self.left_encoder_rawValue_current, self.right_encoder_rawValue_current)
         #print(self.right_encoder_rawValue_current)
         #print(self.left_encoder_rawValue_current)
         # TODO: Make a Separate Class of Function for this calculation
@@ -151,49 +156,65 @@ class DiffTf(Node):
         if((self.left_encoder_rawValue_current > self.left_encoder_rawValue_highest * 0.7 and self.left_encoder_rawValue_current <= self.left_encoder_rawValue_highest) and (self.left_encoder_rawValue_previous >= self.left_encoder_rawValue_lowest and self.left_encoder_rawValue_previous < self.left_encoder_rawValue_highest * 0.3)):
             self.left_encoder_rawValue_previous = self.left_encoder_rawValue_previous + self.left_encoder_rawValue_highest
         #Rotation Positive Direction (Clockwise)  
-        if((self.left_encoder_rawValue_previous > self.left_encoder_rawValue_highest * 0.7 and self.left_encoder_rawValue_previous <= self.left_encoder_rawValue_highest) and (self.left_encoder_rawValue_current   >= self.left_encoder_rawValue_lowest and self.left_encoder_rawValue_current   < self.left_encoder_rawValue_highest * 0.3)):
+        elif((self.left_encoder_rawValue_previous > self.left_encoder_rawValue_highest * 0.7 and self.left_encoder_rawValue_previous <= self.left_encoder_rawValue_highest) and (self.left_encoder_rawValue_current   >= self.left_encoder_rawValue_lowest and self.left_encoder_rawValue_current   < self.left_encoder_rawValue_highest * 0.3)):
             self.left_encoder_rawValue_previous = self.left_encoder_rawValue_previous - self.left_encoder_rawValue_highest
         
         if((self.left_encoder_rawValue_current  >= self.left_encoder_rawValue_previous + self.all_encoder_change_detect_resolution)):
-            self.left_encoder_tick = self.left_encoder_tick + self.all_encoder_tick_counter_resolution 
+            # change + to - after this line if you want
+            self.left_encoder_tick = self.left_encoder_tick - (abs(self.left_encoder_rawValue_current - self.left_encoder_rawValue_previous)/self.all_encoder_tick_counter_resolution)
+            if(self.left_first_cycle_flag == True):
+                self.left_encoder_tick = 0
+                self.left_first_cycle_flag = False
             self.left_encoder_rawValue_previous = self.left_encoder_rawValue_current  
         
-        if(self.left_encoder_rawValue_current  <= self.left_encoder_rawValue_previous - self.all_encoder_change_detect_resolution):
-            self.left_encoder_tick = self.left_encoder_tick- self.all_encoder_tick_counter_resolution 
+        elif(self.left_encoder_rawValue_current  <= self.left_encoder_rawValue_previous - self.all_encoder_change_detect_resolution):
+            # change + to - after this line if you want
+            self.left_encoder_tick = self.left_encoder_tick + (abs(self.left_encoder_rawValue_current - self.left_encoder_rawValue_previous)/self.all_encoder_tick_counter_resolution ) 
+            if(self.left_first_cycle_flag == True):
+                self.left_encoder_tick = 0
+                self.left_first_cycle_flag = False
             self.left_encoder_rawValue_previous = self.left_encoder_rawValue_current  
 
-        if(self.left_encoder_tick > self.all_encoder_tick_higest):
+        if(self.left_encoder_tick > self.all_encoder_tick_highest):
             self.left_encoder_tick = 0
         
         if(self.left_encoder_tick < self.all_encoder_tick_lowest):
             self.left_encoder_tick = 0 
         
-        self.lwheelCallback(self.left_encoder_tick) # Send to Another Function. TODO: This code is just temporary. I have to Clean it
+        #print('Left Tick: ',self.left_encoder_tick)
+        #self.lwheelCallback(self.left_encoder_tick) # Send to Another Function. TODO: This code is just temporary. I have to Clean it
 
         # -------------- Right Encoder Raw value to Tick Converter ----------------
         #Rotatin Negative Direction (Anti Clockwise)
         if((self.right_encoder_rawValue_current > self.right_encoder_rawValue_highest * 0.7 and self.right_encoder_rawValue_current <= self.right_encoder_rawValue_highest) and (self.right_encoder_rawValue_previous >= self.right_encoder_rawValue_lowest and self.right_encoder_rawValue_previous < self.right_encoder_rawValue_highest * 0.3)):
             self.right_encoder_rawValue_previous = self.right_encoder_rawValue_previous + self.right_encoder_rawValue_highest
         #Rotation Positive Direction (Clockwise)  
-        if((self.right_encoder_rawValue_previous > self.right_encoder_rawValue_highest * 0.7 and self.right_encoder_rawValue_previous <= self.right_encoder_rawValue_highest) and (self.right_encoder_rawValue_current   >= self.right_encoder_rawValue_lowest and self.right_encoder_rawValue_current   < self.right_encoder_rawValue_highest * 0.3)):
+        elif((self.right_encoder_rawValue_previous > self.right_encoder_rawValue_highest * 0.7 and self.right_encoder_rawValue_previous <= self.right_encoder_rawValue_highest) and (self.right_encoder_rawValue_current   >= self.right_encoder_rawValue_lowest and self.right_encoder_rawValue_current   < self.right_encoder_rawValue_highest * 0.3)):
             self.right_encoder_rawValue_previous = self.right_encoder_rawValue_previous - self.right_encoder_rawValue_highest
+        
         if((self.right_encoder_rawValue_current  >= self.right_encoder_rawValue_previous + self.all_encoder_change_detect_resolution)):
-            self.right_encoder_tick = self.right_encoder_tick + self.all_encoder_tick_counter_resolution 
+            self.right_encoder_tick = self.right_encoder_tick + (abs(self.right_encoder_rawValue_current - self.right_encoder_rawValue_previous)/self.all_encoder_tick_counter_resolution)
+            if(self.right_first_cycle_flag == True):
+                self.right_encoder_tick = 0
+                self.right_first_cycle_flag = False
             self.right_encoder_rawValue_previous = self.right_encoder_rawValue_current  
         
-        if(self.right_encoder_rawValue_current  <= self.right_encoder_rawValue_previous - self.all_encoder_change_detect_resolution):
-            self.right_encoder_tick = self.right_encoder_tick- self.all_encoder_tick_counter_resolution 
+        elif(self.right_encoder_rawValue_current  <= self.right_encoder_rawValue_previous - self.all_encoder_change_detect_resolution):
+            self.right_encoder_tick = self.right_encoder_tick - (abs(self.right_encoder_rawValue_current - self.right_encoder_rawValue_previous)/self.all_encoder_tick_counter_resolution)
+            if(self.right_first_cycle_flag == True):
+                self.right_encoder_tick = 0
+                self.right_first_cycle_flag = False
             self.right_encoder_rawValue_previous = self.right_encoder_rawValue_current  
 
-        if(self.right_encoder_tick > self.all_encoder_tick_higest):
+        if(self.right_encoder_tick > self.all_encoder_tick_highest):
             self.right_encoder_tick = 0
         
         if(self.right_encoder_tick < self.all_encoder_tick_lowest):
             self.right_encoder_tick = 0 
+        #print('L-R Tick:     ',self.left_encoder_tick, self.right_encoder_tick)
+        #self.rwheelCallback(self.right_encoder_tick) # Send to Another Function. TODO: This code is just temporary. I have to Clean it
+
         
-        self.rwheelCallback(self.right_encoder_tick) # Send to Another Function. TODO: This code is just temporary. I have to Clean it
-
-
 
 
     def targetWheelVelocity(self):
@@ -213,12 +234,17 @@ class DiffTf(Node):
                     d_left = 0
                     d_right = 0
                 else:
-                    d_left = (self.left - self.enc_left) / self.ticks_meter
-                    d_right = (self.right - self.enc_right) / self.ticks_meter
-                self.enc_left = self.left
-                self.enc_right = self.right
-                #print('enc_left:', self.enc_left)
-                #print('enc_right:', self.enc_right)
+                    #d_left = (self.left - self.enc_left) / self.ticks_meter
+                    #d_right = (self.right - self.enc_right) / self.ticks_meter
+                    d_left = (self.left_encoder_tick - self.enc_left) / self.ticks_meter
+                    d_right = (self.right_encoder_tick - self.enc_right) / self.ticks_meter
+                    
+                #self.enc_left = self.left
+                #self.enc_right = self.right
+                self.enc_left = self.left_encoder_tick
+                self.enc_right = self.right_encoder_tick
+                print('enc_left:', self.enc_left)
+                print('enc_right:', self.enc_right)
                 # distance traveled is the average of the two wheels 
                 d = ( d_left + d_right ) / 2
                 # this approximation works (in radians) for small angles
@@ -253,8 +279,10 @@ class DiffTf(Node):
                 self.previous_left_error = self.left_wheel_error  
                 if(self.target_left_wheel_velocity > 0.0):
                     forward_left_wheel_direction = 'F'
+                    #self.applied_left_wheel_pwm = 255
                 if(self.target_left_wheel_velocity < 0.0):
                     forward_left_wheel_direction = 'R'
+                    #self.applied_left_wheel_pwm = 255
                 if(self.target_left_wheel_velocity == 0.0):
                     forward_left_wheel_direction = 'S'   
                 print('Left_Error:',self.left_wheel_error,' Left_Apl_PWM: ',self.applied_left_wheel_pwm, ' Target_L_Vel:',self.target_left_wheel_velocity, ' Curr_L_Vel:',self.current_left_wheel_velocity,' Integral_L:',self.left_integral)
@@ -280,8 +308,10 @@ class DiffTf(Node):
                 self.previous_right_error = self.right_wheel_error
                 if(self.target_right_wheel_velocity > 0.0):
                     forward_right_wheel_direction = 'F'
+                    #self.applied_right_wheel_pwm = 255
                 if(self.target_right_wheel_velocity < 0.0):
                     forward_right_wheel_direction = 'R'
+                    #self.applied_right_wheel_pwm = 255
                 if(self.target_right_wheel_velocity == 0.0):
                     forward_right_wheel_direction = 'S'  
                 print('Right_Error:',self.right_wheel_error,' Right_Apl_PWM: ',self.applied_right_wheel_pwm, ' Target_R_Vel:',self.target_right_wheel_velocity, ' Curr_R_Vel:',self.current_right_wheel_velocity,' Integral_R:',self.right_integral)
@@ -290,6 +320,7 @@ class DiffTf(Node):
                 #Send to Arduino Serial - Data Format
                 #Left_Forward_Motor_Direction:PWM:Rigit_Forward_Motor_Direction:PWM
                 send_data = forward_left_wheel_direction + str(int(self.applied_left_wheel_pwm)).zfill(3) + forward_right_wheel_direction + str(int(self.applied_right_wheel_pwm)).zfill(3) + '\n'
+                print(send_data)
                 ser.write(bytes(send_data, 'utf-8'))
                 #ser.write(send_data.encode())
                
@@ -363,11 +394,11 @@ class DiffTf(Node):
         #print("ENC lwheelCallback",enc)
         if (enc < self.encoder_low_wrap and self.prev_lencoder > self.encoder_high_wrap):
             self.lmult = self.lmult + 1
-            print("self.mult.Lwheel+ = ", self.lmult ) 
+            #print("self.mult.Lwheel+ = ", self.lmult ) 
             
         if (enc > self.encoder_high_wrap and self.prev_lencoder < self.encoder_low_wrap):
             self.lmult = self.lmult - 1
-            print("self.mult.Lwheel- = ", self.lmult ) 
+            #print("self.mult.Lwheel- = ", self.lmult ) 
             
         self.left = 1.0 * (enc + self.lmult * (self.encoder_max - self.encoder_min)) 
         #print("ENC lwheelCallback : self.left= ", self.left) 
@@ -385,6 +416,7 @@ class DiffTf(Node):
             
         self.right = 1.0 * (enc + self.rmult * (self.encoder_max - self.encoder_min))
         #print("ENC RwheelCallback : self.right= ", self.right) 
+        #print('Left-Right Enc Tick: ',self.left,' -- ',self.right)
         self.prev_rencoder = enc
 
     def twistCallback(self, msg = Twist):
