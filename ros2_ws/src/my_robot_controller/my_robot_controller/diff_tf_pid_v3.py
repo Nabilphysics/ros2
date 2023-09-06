@@ -15,7 +15,7 @@ from tf2_ros import TransformBroadcaster, TransformStamped
 from std_msgs.msg import Int16
 from geometry_msgs.msg import Twist
 import serial
-ser = serial.Serial('/dev/ttyACM1', 115200, timeout=1)
+ser = serial.Serial('/dev/ttyACM0', 115200, timeout=1)
 
 class DiffTf(Node):
     def __init__(self):
