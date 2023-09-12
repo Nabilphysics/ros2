@@ -17,6 +17,46 @@ from geometry_msgs.msg import Twist
 import serial
 ser = serial.Serial('/dev/ttyACM0', 115200, timeout=1)
 
+class PID():
+    def __init__(self, Kp, Ki, Kd, highest_pwm, lowest_pwm):
+        self.wheel_error = 0.0 
+        self.integral = 0.0
+        self.derivative = 0.0
+        self.previous_error = 0.0
+        self.applied_wheel_pwm = 0.0
+        self.Kp = Kp
+        self.Ki = Ki
+        self.Kd = Kd
+        self.highest_pwm = highest_pwm
+        self.lowest_pwm = lowest_pwm
+    
+    def getPidOutput(self, time_elapsed, target_velocity, current_velocity):
+            
+        self.wheel_error = abs(target_velocity) - abs(current_velocity)
+        
+        self.integral = self.integral + (self.wheel_error * self.Ki* time_elapsed)
+        
+        if(self.integral > self.highest_pwm):
+            self.integral = self.highest_pwm
+        elif(self.integral < self.lowest_pwm):
+            self.integral = self.lowest_pwm
+        
+        self.derivative = (self.wheel_error - self.previous_error)/time_elapsed
+        self.applied_wheel_pwm = (self.Kp * self.wheel_error) + (self.integral) + (self.Kd * self.derivative)
+        
+        if self.applied_wheel_pwm > self.highest_pwm:
+            self.applied_wheel_pwm = self.highest_pwm
+        
+        elif self.applied_wheel_pwm < self.lowest_pwm:
+            self.applied_wheel_pwm = self.lowest_pwm
+        
+        if target_velocity == 0.0:
+            self.applied_wheel_pwm = 0
+            self.integral = 0.0
+        self.previous_error = self.wheel_error 
+        return self.applied_wheel_pwm 
+
+
 class DiffTf(Node):
     def __init__(self):
         super().__init__('diff_tf_pid_v4')
@@ -27,7 +67,7 @@ class DiffTf(Node):
         #self.rate = self.get_parameter("~rate",10.0)  # the rate at which to publish the transform
         self.rate = 10.0
         #self.ticks_meter = float(self.get_parameter('ticks_meter', 250))  # The number of wheel encoder ticks per meter of travel
-        self.ticks_meter = 14650
+        self.ticks_meter = 27190 #Experiment: 26850 Calculated: 27190
         #self.base_width = float(self.get_parameter('~base_width', 1.3)) # The wheel base width in meters
         self.base_width = 1.3
         #self.base_frame_id = self.get_parameter('~base_frame_id','base_link') # the name of the base frame of the robot
@@ -63,29 +103,33 @@ class DiffTf(Node):
         self.current_right_wheel_velocity = 0.0
         #Simulated
         self.simulated_velocity = 0
+        '''
         # PID Related Left Wheel Variable
         self.left_wheel_error = 0.0 
         self.left_integral = 0.0
         self.left_derivative = 0.0
         self.previous_left_error = 0.0
         self.applied_left_wheel_pwm = 0.0
-        self.left_wheel_Kp = 150.0
-        self.left_wheel_Ki = 0.0
-        self.left_wheel_Kd = 0.0
+        self.left_wheel_Kp = 160.0
+        self.left_wheel_Ki = 60.0
+        self.left_wheel_Kd = 1.5
         self.left_highest_pwm = 255.0
         self.left_lowest_pwm = 20.0
+        '''
         self.forward_left_wheel_direction = ''
+        '''
         # PID Related Right Wheel Variable
         self.right_wheel_error = 0.0        
         self.right_integral = 0.0        
         self.right_derivative = 0.0        
         self.previous_right_error = 0.0       
         self.applied_right_wheel_pwm = 0.0
-        self.right_wheel_Kp = 150.0
-        self.right_wheel_Ki = 0.0
-        self.right_wheel_Kd = 0.0
+        self.right_wheel_Kp = 160.0
+        self.right_wheel_Ki = 60.0
+        self.right_wheel_Kd = 1.5
         self.right_highest_pwm = 255
         self.right_lowest_pwm = 20
+        '''
         self.forward_right_wheel_direction = ''
        
 
@@ -95,9 +139,7 @@ class DiffTf(Node):
         self.forward_right_motor_tick = 0
         self.forward_left_motor_tick = 0
         # ----- Encoder Related Varibale -- END
-
         self.then = ((ROSClock().now().to_msg().sec)+((ROSClock().now().to_msg().nanosec)/1e9))
-        
         # subscriptions
         #self.create_subscription(Int16,'lwheel',self.lwheelCallback, 10)
         #self.create_subscription(Int16,'rwheel',self.rwheelCallback, 10)
@@ -119,15 +161,22 @@ class DiffTf(Node):
         self.commanded_angular_velocity = 0.0
         
         self.create_timer(0.001, self.serialDataProcess)
-        self.create_timer(0.1, self.update)
+        self.create_timer(0.01, self.update)
         self.create_timer(0.05, self.targetWheelVelocity)
         self.create_timer(0.001,self.sendReceiveData)
+        self.create_timer(1.0, self.showData)
         
-        
+    def showData(self):
+        #print('Left-Right Velocity: ', self.current_left_wheel_velocity, self.current_right_wheel_velocity)
+        #print('Left-Right RPM: ', ((self.current_left_wheel_velocity*9.55)/0.06), ((self.current_right_wheel_velocity*9.55)/0.06)) 
+        print('------')
+        print('Right_Error:',self.right_wheel_error,' Right_Apl_PWM: ',self.applied_right_wheel_pwm, ' Target_R_Vel:',self.target_right_wheel_velocity, ' Curr_R_Vel:',self.current_right_wheel_velocity,' Integral_R:',self.right_integral, ' Deriv:', self.right_derivative)   
+        print('Left_Error:',self.left_wheel_error,' Left_Apl_PWM: ',self.applied_left_wheel_pwm, ' Target_L_Vel:',self.target_left_wheel_velocity, ' Curr_L_Vel:',self.current_left_wheel_velocity,' Integral_L:',self.left_integral,' Deriv:', self.left_derivative)
+        print('######')
     def sendReceiveData(self):
         #self.send_data = 'KF110F110G'
-        self.applied_right_wheel_pwm = 0
-        self.applied_left_wheel_pwm = 0
+        #self.applied_right_wheel_pwm = 110
+        #self.applied_left_wheel_pwm = 110
         
         #Send to Arduino Serial - Data Format
         #StartChar:Left_Forward_Motor_Direction:PWM:Rigit_Forward_Motor_Direction:PWM:EndChar
@@ -137,9 +186,6 @@ class DiffTf(Node):
         #print(self.serial_raw)
 
     def serialDataProcess(self):
-        #serial_raw = ser.readline()
-        #print(serial_raw)
-        #serial_raw = self.serial_raw
         try:
             serial_decode = self.serial_raw.decode("utf-8","ignore")
             #print(serial_decode) position 0 = right encoder raw value, 1 = left Encoder Raw Value
@@ -149,7 +195,6 @@ class DiffTf(Node):
             self.forward_left_motor_tick = float(serial_split[1])
         except:
             pass
-        #print('L - R Tick: ',self.forward_left_motor_tick, self.forward_right_motor_tick)
         self.lwheelCallback(self.forward_left_motor_tick) # Send to Another Function. 
         self.rwheelCallback(self.forward_right_motor_tick) # Send to Another Function. 
 
@@ -157,8 +202,6 @@ class DiffTf(Node):
         
         self.target_left_wheel_velocity = self.commanded_linear_velocity * 1.0 - ((self.commanded_angular_velocity * self.robot_base)/2)
         self.target_right_wheel_velocity = self.commanded_linear_velocity * 1.0 + ((self.commanded_angular_velocity * self.robot_base)/2)
-        #print('Target Left Wheel Velocity: ',self.target_left_wheel_velocity) 
-        #print('Target Right Wheel Velocity: ',self.target_right_wheel_velocity) 
         
     def update(self):
             now = ((ROSClock().now().to_msg().sec)+((ROSClock().now().to_msg().nanosec)/1e9))
@@ -170,23 +213,19 @@ class DiffTf(Node):
                     d_left = 0
                     d_right = 0
                 else:
-                    
                     d_left = (self.left - self.enc_left) / self.ticks_meter
                     d_right = (self.right - self.enc_right) / self.ticks_meter
-                    
                     '''
                     d_left = (self.forward_left_motor_tick - self.enc_left) / self.ticks_meter
                     d_right = (self.forward_right_motor_tick - self.enc_right) / self.ticks_meter
                     '''
-                    
                 self.enc_left = self.left
                 self.enc_right = self.right
                 '''
                 self.enc_left = self.forward_left_motor_tick
                 self.enc_right = self.forward_right_motor_tick
                 '''
-                #print('enc_left:', self.enc_left)
-                #print('enc_right:', self.enc_right)
+               
                 # distance traveled is the average of the two wheels 
                 d = ( d_left + d_right ) / 2
                 # this approximation works (in radians) for small angles
@@ -194,7 +233,8 @@ class DiffTf(Node):
                 # calculate velocities
                 self.current_left_wheel_velocity = d_left/elapsed
                 self.current_right_wheel_velocity = d_right/elapsed
-                print('Left-Right Velocity: ', self.current_left_wheel_velocity, self.current_right_wheel_velocity)
+                #print('d_left - d_right: ', d_left, d_right)
+                
                 
                 self.dx = d / elapsed
                 self.dr = th / elapsed
@@ -215,18 +255,19 @@ class DiffTf(Node):
                
                 if self.applied_left_wheel_pwm > self.left_highest_pwm:
                     self.applied_left_wheel_pwm = self.left_highest_pwm
+                
                 elif self.applied_left_wheel_pwm < self.left_lowest_pwm:
                     self.applied_left_wheel_pwm = self.left_lowest_pwm
+               
                 if self.target_left_wheel_velocity == 0.0:
                     self.applied_left_wheel_pwm = 0
                     self.left_integral = 0.0
                 self.previous_left_error = self.left_wheel_error  
+                
                 if(self.target_left_wheel_velocity > 0.0):
                     self.forward_left_wheel_direction = 'F'
-                    #self.applied_left_wheel_pwm = 255
                 if(self.target_left_wheel_velocity < 0.0):
                     self.forward_left_wheel_direction = 'R'
-                    #self.applied_left_wheel_pwm = 255
                 if(self.target_left_wheel_velocity == 0.0):
                     self.forward_left_wheel_direction = 'S'   
                 #print('Left_Error:',self.left_wheel_error,' Left_Apl_PWM: ',self.applied_left_wheel_pwm, ' Target_L_Vel:',self.target_left_wheel_velocity, ' Curr_L_Vel:',self.current_left_wheel_velocity,' Integral_L:',self.left_integral)
@@ -323,18 +364,9 @@ class DiffTf(Node):
                 odom.twist.twist.angular.z = self.dr
                 
                 self.odomPub.publish(odom)
-
-                if(self.dx > 0):
-                    #print("elapsed=", elapsed)
-                    #print("self.dx= ", self.dx)
-                    #print("self.dr= ", self.dr)    
-                    #print("self.x= ", self.x)  
-                    #print("self.y= ", self.y)
-                    #print("self.th= ", self.th)       
-                    print(" -------- ")
+                    
              
     def lwheelCallback(self, msg):
-
         enc = msg
         #print("ENC lwheelCallback",enc)
         if (enc < self.encoder_low_wrap and self.prev_lencoder > self.encoder_high_wrap):
@@ -361,14 +393,13 @@ class DiffTf(Node):
             
         self.right = 1.0 * (enc + self.rmult * (self.encoder_max - self.encoder_min))
         #print("ENC RwheelCallback : self.right= ", self.right) 
-        print('Left-Right Enc Tick: ',self.left,' -- ',self.right)
+        #print('Left-Right Enc Tick: ',self.left,' -- ',self.right)
         self.prev_rencoder = enc
 
     def twistCallback(self, msg = Twist):
         self.commanded_linear_velocity = msg.linear.x
         self.commanded_angular_velocity = msg.angular.z
         self.simulated_velocity = msg.linear.y
-
         #print('Com_linear_velocity: ', self.commanded_linear_velocity )
         #print('Com_angular_velocity: ',self.commanded_angular_velocity)
 
