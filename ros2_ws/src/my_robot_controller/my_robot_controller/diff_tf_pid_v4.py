@@ -23,7 +23,7 @@ class PID():
         self.integral = 0.0
         self.derivative = 0.0
         self.previous_error = 0.0
-        self.applied_wheel_pwm = 0.0
+        self.applied_wheel_pwm = 0
         self.Kp = Kp
         self.Ki = Ki
         self.Kd = Kd
@@ -69,7 +69,7 @@ class DiffTf(Node):
         #self.ticks_meter = float(self.get_parameter('ticks_meter', 250))  # The number of wheel encoder ticks per meter of travel
         self.ticks_meter = 27190 #Experiment: 26850 Calculated: 27190
         #self.base_width = float(self.get_parameter('~base_width', 1.3)) # The wheel base width in meters
-        self.base_width = 1.3
+        self.base_width = 0.38
         #self.base_frame_id = self.get_parameter('~base_frame_id','base_link') # the name of the base frame of the robot
         self.base_frame_id = "base_link"
         #self.odom_frame_id = self.get_parameter('~odom_frame_id', 'odom') # the name of the odometry reference frame
@@ -86,58 +86,62 @@ class DiffTf(Node):
         self.t_next =  ((ROSClock().now().to_msg().sec)+((ROSClock().now().to_msg().nanosec)/1e9)) + self.t_delta
         
         # internal data
-        self.enc_left = None        # wheel encoder readings
-        self.enc_right = None
-        self.left = 0               # actual values coming back from robot
-        self.right = 0
-        self.lmult = 0
-        self.rmult = 0
-        self.prev_lencoder = 0
-        self.prev_rencoder = 0
+        self.enc_left_forward = None        # wheel encoder readings
+        self.enc_left_aft = None
+        self.enc_right_forward = None
+        self.enc_right_aft = None
+        
+        self.left_forward = 0               # actual values coming back from robot
+        self.left_aft = 0
+        self.right_forward = 0
+        self.right_aft = 0
+        
+        #self.lmult = 0
+        self.l_f_mult = 0
+        self.l_a_mult = 0
+        self.r_f_mult = 0
+        self.r_a_mult = 0
+        
+        self.prev_l_f_encoder = 0
+        self.prev_l_a_encoder = 0
+        self.prev_r_f_encoder = 0
+        self.prev_r_a_encoder = 0
+
+        
         self.x = 0.0                  # position in xy plane 
         self.y = 0.0
         self.th = 0.0
         self.dx = 0                 # speeds in x/rotation
         self.dr = 0
-        self.current_left_wheel_velocity = 0.0
-        self.current_right_wheel_velocity = 0.0
-        #Simulated
-        self.simulated_velocity = 0
-        '''
-        # PID Related Left Wheel Variable
-        self.left_wheel_error = 0.0 
-        self.left_integral = 0.0
-        self.left_derivative = 0.0
-        self.previous_left_error = 0.0
-        self.applied_left_wheel_pwm = 0.0
-        self.left_wheel_Kp = 160.0
-        self.left_wheel_Ki = 60.0
-        self.left_wheel_Kd = 1.5
-        self.left_highest_pwm = 255.0
-        self.left_lowest_pwm = 20.0
-        '''
-        self.forward_left_wheel_direction = ''
-        '''
-        # PID Related Right Wheel Variable
-        self.right_wheel_error = 0.0        
-        self.right_integral = 0.0        
-        self.right_derivative = 0.0        
-        self.previous_right_error = 0.0       
-        self.applied_right_wheel_pwm = 0.0
-        self.right_wheel_Kp = 160.0
-        self.right_wheel_Ki = 60.0
-        self.right_wheel_Kd = 1.5
-        self.right_highest_pwm = 255
-        self.right_lowest_pwm = 20
-        '''
-        self.forward_right_wheel_direction = ''
-       
+
+        self.current_left_forward_velocity = 0.0
+        self.current_left_aft_velocity = 0.0
+        self.current_right_forward_velocity = 0.0
+        self.current_right_aft_velocity = 0.0
+        
+        #Direction Variable. Left Two motors will same and Right Two Motors will be same
+        self.left_wheel_direction = ''
+        self.right_wheel_direction = ''
+        # Applied PWM to Motors. Four Separate value will be computed using PID class
+        self.applied_left_forward_pwm = 0.0
+        self.applied_right_forward_pwm = 0.0
+        self.applied_left_aft_pwm = 0
+        self.applied_right_aft_Pwm = 0        
+        # PID Object for four Motors, but for direction and target velocity left two motors and right two motors will be same and thus grouped.
+        self.left_forward_pid = PID(Kp=160.0, Ki=60.0, Kd=1.5, highest_pwm=255, lowest_pwm=20)
+        self.right_forward_pid = PID(Kp=160.0, Ki=60.0, Kd=1.5, highest_pwm=255, lowest_pwm=20)
+        self.left_aft_pid = PID(Kp=160.0, Ki=60.0, Kd=1.5, highest_pwm=255, lowest_pwm=20)
+        self.right_aft_pid = PID(Kp=160.0, Ki=60.0, Kd=1.5, highest_pwm=255, lowest_pwm=20)
+        
 
         self.send_data = ''
         self.serial_raw = ''
         # --- Encoder Related Varibale ---
-        self.forward_right_motor_tick = 0
-        self.forward_left_motor_tick = 0
+        self.left_forward_motor_tick = 0
+        self.left_aft_motor_tick = 0
+        self.right_forward_motor_tick = 0
+        self.right_aft_motor_tick = 0
+        
         # ----- Encoder Related Varibale -- END
         self.then = ((ROSClock().now().to_msg().sec)+((ROSClock().now().to_msg().nanosec)/1e9))
         # subscriptions
@@ -170,20 +174,18 @@ class DiffTf(Node):
         #print('Left-Right Velocity: ', self.current_left_wheel_velocity, self.current_right_wheel_velocity)
         #print('Left-Right RPM: ', ((self.current_left_wheel_velocity*9.55)/0.06), ((self.current_right_wheel_velocity*9.55)/0.06)) 
         print('------')
-        print('Right_Error:',self.right_wheel_error,' Right_Apl_PWM: ',self.applied_right_wheel_pwm, ' Target_R_Vel:',self.target_right_wheel_velocity, ' Curr_R_Vel:',self.current_right_wheel_velocity,' Integral_R:',self.right_integral, ' Deriv:', self.right_derivative)   
-        print('Left_Error:',self.left_wheel_error,' Left_Apl_PWM: ',self.applied_left_wheel_pwm, ' Target_L_Vel:',self.target_left_wheel_velocity, ' Curr_L_Vel:',self.current_left_wheel_velocity,' Integral_L:',self.left_integral,' Deriv:', self.left_derivative)
+        print('Right_Error:',self.right_forward_pid.wheel_error,' Right_Apl_PWM: ',self.applied_right_forward_pwm, ' Target_R_Vel:',self.target_right_wheel_velocity, ' Curr_R_Vel:',self.current_right_forward_velocity,' Integral_R:',self.right_forward_pid.integral, ' Deriv:', self.right_forward_pid.derivative)   
+        print('Left_Error:',self.left_forward_pid.wheel_error,' Left_Apl_PWM: ',self.applied_left_forward_pwm, ' Target_L_Vel:',self.target_left_wheel_velocity, ' Curr_L_Vel:',self.current_left_forward_velocity,' Integral_L:',self.left_forward_pid.integral,' Deriv:', self.left_forward_pid.derivative)
         print('######')
+   
     def sendReceiveData(self):
-        #self.send_data = 'KF110F110G'
-        #self.applied_right_wheel_pwm = 110
-        #self.applied_left_wheel_pwm = 110
-        
         #Send to Arduino Serial - Data Format
         #StartChar:Left_Forward_Motor_Direction:PWM:Rigit_Forward_Motor_Direction:PWM:EndChar
-        self.send_data = 'K'+ self.forward_left_wheel_direction + str(int(self.applied_left_wheel_pwm)).zfill(3) + self.forward_right_wheel_direction + str(int(self.applied_right_wheel_pwm)).zfill(3) + 'G'
+        #self.send_data = 'K'+ self.left_wheel_direction + str(self.applied_forward_left_pwm).zfill(3) + self.right_wheel_direction + str(self.applied_forward_right_pwm).zfill(3) + 'G'
+        self.send_data = 'K'+ 'F' + str(int(self.applied_left_forward_pwm)).zfill(3) + 'F' + str(int(self.applied_right_forward_pwm)).zfill(3) + 'G'
+
         ser.write(bytes(self.send_data, 'utf-8'))
         self.serial_raw = ser.readline()
-        #print(self.serial_raw)
 
     def serialDataProcess(self):
         try:
@@ -191,12 +193,16 @@ class DiffTf(Node):
             #print(serial_decode) position 0 = right encoder raw value, 1 = left Encoder Raw Value
             serial_split = serial_decode.split(",")
         
-            self.forward_right_motor_tick = float(serial_split[0])
-            self.forward_left_motor_tick = float(serial_split[1])
+            self.right_forward_motor_tick = int(serial_split[0])
+            self.left_forward_motor_tick = int(serial_split[1])
+            self.right_aft_motor_tick = int(serial_split[2])
+            self.left_aft_motor_tick = int(serial_split[3])
         except:
             pass
-        self.lwheelCallback(self.forward_left_motor_tick) # Send to Another Function. 
-        self.rwheelCallback(self.forward_right_motor_tick) # Send to Another Function. 
+        self.leftForwardEncoderCount(self.left_forward_motor_tick) # Send to Another Function. 
+        self.rightForwardEncoderCount(self.right_forward_motor_tick) # Send to Another Function. 
+        self.leftAftEncoderCount(self.left_aft_motor_tick)
+        self.rightAftEncoderCount(self.right_aft_motor_tick)
 
     def targetWheelVelocity(self):
         
@@ -209,88 +215,61 @@ class DiffTf(Node):
                 elapsed = now - self.then
                 self.then = now
                 # calculate odometry
-                if self.enc_left == None:
-                    d_left = 0
-                    d_right = 0
+                if self.enc_left_forward != None:
+                    d_left_forward = 0
+                    d_left_aft = 0
+                    d_right_forward = 0
+                    d_right_aft = 0
+                    print('Zero')
+                    
                 else:
-                    d_left = (self.left - self.enc_left) / self.ticks_meter
-                    d_right = (self.right - self.enc_right) / self.ticks_meter
+                    d_left_forward = (self.left_forward - self.enc_left_forward) / self.ticks_meter
+                    print(d_left_forward)
+                    d_left_aft = (self.left_aft - self.enc_left_aft) / self.ticks_meter
+                    d_right_forward = (self.right_forward - self.enc_right_forward) / self.ticks_meter
+                    d_right_aft = (self.right_aft - self.enc_right_aft)/self.ticks_meter
                     '''
                     d_left = (self.forward_left_motor_tick - self.enc_left) / self.ticks_meter
                     d_right = (self.forward_right_motor_tick - self.enc_right) / self.ticks_meter
                     '''
-                self.enc_left = self.left
-                self.enc_right = self.right
+                self.enc_left = self.left_forward
+                self.enc_right = self.right_forward
                 '''
                 self.enc_left = self.forward_left_motor_tick
                 self.enc_right = self.forward_right_motor_tick
                 '''
-               
+                d_left = (d_left_forward + d_left_aft)/2
+                d_right = (d_right_forward + d_right_aft)/2
                 # distance traveled is the average of the two wheels 
                 d = ( d_left + d_right ) / 2
                 # this approximation works (in radians) for small angles
                 th = ( d_right - d_left ) / self.base_width
                 # calculate velocities
-                self.current_left_wheel_velocity = d_left/elapsed
-                self.current_right_wheel_velocity = d_right/elapsed
+                self.current_left_forward_velocity = d_left_forward/elapsed
+                self.current_left_aft_velocity = d_left_aft/elapsed
+                self.current_right_forward_velocity = d_right_forward/elapsed
+                self.current_right_aft_velocity = d_right_aft/elapsed
                 #print('d_left - d_right: ', d_left, d_right)
-                
                 
                 self.dx = d / elapsed
                 self.dr = th / elapsed
 
-                #Left Wheel PID : TODO: Make a Separate Class for PID
-                
-                self.left_wheel_error = abs(self.target_left_wheel_velocity) - abs(self.current_left_wheel_velocity)
-                #self.left_wheel_error = abs(self.target_current_left_wheel_velocity) - abs(self.simulated_velocity)
-                self.left_integral = self.left_integral + (self.left_wheel_error * self.left_wheel_Ki* elapsed)
-                
-                if(self.left_integral > self.left_highest_pwm):
-                    self.left_integral = self.left_highest_pwm
-                elif(self.left_integral < self.left_lowest_pwm):
-                    self.left_integral = self.left_lowest_pwm
-               
-                self.left_derivative = (self.left_wheel_error - self.previous_left_error)/elapsed
-                self.applied_left_wheel_pwm = (self.left_wheel_Kp * self.left_wheel_error) + (self.left_integral) + (self.left_wheel_Kd * self.left_derivative)
-               
-                if self.applied_left_wheel_pwm > self.left_highest_pwm:
-                    self.applied_left_wheel_pwm = self.left_highest_pwm
-                
-                elif self.applied_left_wheel_pwm < self.left_lowest_pwm:
-                    self.applied_left_wheel_pwm = self.left_lowest_pwm
-               
-                if self.target_left_wheel_velocity == 0.0:
-                    self.applied_left_wheel_pwm = 0
-                    self.left_integral = 0.0
-                self.previous_left_error = self.left_wheel_error  
-                
+                self.applied_left_forward_pwm = self.left_forward_pid.getPidOutput(time_elapsed=elapsed, target_velocity=self.target_left_wheel_velocity, current_velocity=self.current_left_forward_velocity)
+                self.applied_left_aft_pwm = self.left_aft_pid.getPidOutput(time_elapsed=elapsed, target_velocity=self.target_left_wheel_velocity, current_velocity=self.current_left_aft_velocity)
+
+                self.applied_right_forward_pwm = self.right_forward_pid.getPidOutput(time_elapsed=elapsed, target_velocity=self.target_right_wheel_velocity, current_velocity=self.current_right_forward_velocity)
+                self.applied_right_aft_Pwm = self.right_aft_pid.getPidOutput(time_elapsed=elapsed, target_velocity=self.target_right_wheel_velocity, current_velocity=self.current_right_aft_velocity)
+
                 if(self.target_left_wheel_velocity > 0.0):
                     self.forward_left_wheel_direction = 'F'
                 if(self.target_left_wheel_velocity < 0.0):
                     self.forward_left_wheel_direction = 'R'
                 if(self.target_left_wheel_velocity == 0.0):
                     self.forward_left_wheel_direction = 'S'   
-                #print('Left_Error:',self.left_wheel_error,' Left_Apl_PWM: ',self.applied_left_wheel_pwm, ' Target_L_Vel:',self.target_left_wheel_velocity, ' Curr_L_Vel:',self.current_left_wheel_velocity,' Integral_L:',self.left_integral)
-
-                # Right Wheel PID
-                self.right_wheel_error = abs(self.target_right_wheel_velocity) - abs(self.current_right_wheel_velocity)
-                self.right_integral = self.right_integral + (self.right_wheel_error * self.right_wheel_Ki * elapsed)
-                if(self.right_integral > self.right_highest_pwm):
-                    self.right_integral = self.right_highest_pwm
-                elif(self.right_integral < self.right_lowest_pwm):
-                    self.right_integral = self.right_lowest_pwm
-
-                self.right_derivative = (self.right_wheel_error - self.previous_right_error)/elapsed
                 
-                self.applied_right_wheel_pwm = (self.right_wheel_Kp * self.right_wheel_error) + (self.right_integral) + (self.right_wheel_Kd * self.right_derivative)
-                if self.applied_right_wheel_pwm > self.right_highest_pwm:
-                    self.applied_right_wheel_pwm = self.right_highest_pwm
-                if self.applied_right_wheel_pwm < self.right_lowest_pwm:
-                    self.applied_right_wheel_pwm = self.right_lowest_pwm
-                if self.target_right_wheel_velocity == 0.0:
-                    self.applied_right_wheel_pwm = 0
-                    self.right_integral = 0.0
-                self.previous_right_error = self.right_wheel_error
+                #self.applied_right_wheel_pwm = self.forward_right_pid.getPidOutput(time_elapsed=elapsed, target_velocity=self.target_right_wheel_velocity, current_velocity=self.current_right_wheel_velocity)
+
+                
                 if(self.target_right_wheel_velocity > 0.0):
                     self.forward_right_wheel_direction = 'F'
                     #self.applied_right_wheel_pwm = 255
@@ -299,18 +278,8 @@ class DiffTf(Node):
                     #self.applied_right_wheel_pwm = 255
                 if(self.target_right_wheel_velocity == 0.0):
                     self.forward_right_wheel_direction = 'S'  
-                #print('Right_Error:',self.right_wheel_error,' Right_Apl_PWM: ',self.applied_right_wheel_pwm, ' Target_R_Vel:',self.target_right_wheel_velocity, ' Curr_R_Vel:',self.current_right_wheel_velocity,' Integral_R:',self.right_integral)
-                
-                #Send to Arduino Serial - Data Format
-                #Left_Forward_Motor_Direction:PWM:Rigit_Forward_Motor_Direction:PWM
-                #self.send_data = 'K'+'S' + str(int(self.applied_left_wheel_pwm)).zfill(3) + 'F' + str(int(self.applied_right_wheel_pwm)).zfill(3) + 'G'
-                #send_data = forward_left_wheel_direction + str(int(self.applied_left_wheel_pwm)).zfill(3) + forward_right_wheel_direction + str(int(self.applied_right_wheel_pwm)).zfill(3) + '\n'
-
-                #print(send_data)
-                #ser.write(bytes(send_data, 'utf-8'))
-                #ser.write(send_data.encode())
                
-                
+               
                 if (d != 0):
                     # calculate distance traveled in x and y
                     x = cos( th ) * d
@@ -366,36 +335,50 @@ class DiffTf(Node):
                 self.odomPub.publish(odom)
                     
              
-    def lwheelCallback(self, msg):
+    def leftForwardEncoderCount(self, msg):
         enc = msg
-        #print("ENC lwheelCallback",enc)
-        if (enc < self.encoder_low_wrap and self.prev_lencoder > self.encoder_high_wrap):
-            self.lmult = self.lmult + 1
-            #print("self.mult.Lwheel+ = ", self.lmult ) 
+        if (enc < self.encoder_low_wrap and self.prev_l_f_encoder > self.encoder_high_wrap):
+            self.l_f_mult = self.l_f_mult + 1
+       
+        if (enc > self.encoder_high_wrap and self.prev_l_f_encoder < self.encoder_low_wrap):
+            self.l_f_mult = self.l_f_mult - 1
             
-        if (enc > self.encoder_high_wrap and self.prev_lencoder < self.encoder_low_wrap):
-            self.lmult = self.lmult - 1
-            #print("self.mult.Lwheel- = ", self.lmult ) 
-            
-        self.left = 1.0 * (enc + self.lmult * (self.encoder_max - self.encoder_min)) 
-        #print("ENC lwheelCallback : self.left= ", self.left) 
-        self.prev_lencoder = enc
+        self.left_forward = 1.0 * (enc + self.l_f_mult * (self.encoder_max - self.encoder_min)) 
+        self.prev_l_f_encoder = enc
         
-    def rwheelCallback(self, msg):
-
+    def rightForwardEncoderCount(self, msg):
         enc = msg
-        #print("ENC RwheelCallback",enc)
-        if(enc < self.encoder_low_wrap and self.prev_rencoder > self.encoder_high_wrap):
-            self.rmult = self.rmult + 1
+        if(enc < self.encoder_low_wrap and self.prev_r_f_encoder > self.encoder_high_wrap):
+            self.r_f_mult = self.r_f_mult + 1
         
-        if(enc > self.encoder_high_wrap and self.prev_rencoder < self.encoder_low_wrap):
-            self.rmult = self.rmult - 1
+        if(enc > self.encoder_high_wrap and self.prev_r_f_encoder < self.encoder_low_wrap):
+            self.r_f_mult = self.r_f_mult - 1
             
-        self.right = 1.0 * (enc + self.rmult * (self.encoder_max - self.encoder_min))
-        #print("ENC RwheelCallback : self.right= ", self.right) 
-        #print('Left-Right Enc Tick: ',self.left,' -- ',self.right)
-        self.prev_rencoder = enc
+        self.right_forward = 1.0 * (enc + self.r_f_mult * (self.encoder_max - self.encoder_min))
+        self.prev_r_f_encoder = enc
+    
+    def leftAftEncoderCount(self, msg):
+        enc = msg
+        if(enc < self.encoder_low_wrap and self.prev_l_a_encoder > self.encoder_high_wrap):
+            self.l_a_mult = self.l_a_mult + 1
+        
+        if(enc > self.encoder_high_wrap and self.prev_l_a_encoder < self.encoder_low_wrap):
+            self.l_a_mult = self.l_a_mult - 1
+            
+        self.left_aft = 1.0 * (enc + self.l_a_mult * (self.encoder_max - self.encoder_min))
+        self.prev_l_a_encoder = enc
 
+    def rightAftEncoderCount(self, msg):
+        enc = msg
+        if(enc < self.encoder_low_wrap and self.prev_r_a_encoder > self.encoder_high_wrap):
+            self.r_a_mult = self.r_a_mult + 1
+        
+        if(enc > self.encoder_high_wrap and self.prev_r_a_encoder < self.encoder_low_wrap):
+            self.r_a_mult = self.r_a_mult - 1
+            
+        self.right_aft = 1.0 * (enc + self.r_a_mult * (self.encoder_max - self.encoder_min))
+        self.prev_r_a_encoder = enc
+    
     def twistCallback(self, msg = Twist):
         self.commanded_linear_velocity = msg.linear.x
         self.commanded_angular_velocity = msg.angular.z
