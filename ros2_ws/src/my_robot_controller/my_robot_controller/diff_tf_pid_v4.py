@@ -18,9 +18,11 @@ from rclpy.qos import QoSProfile
 from sensor_msgs.msg import JointState
 from tf2_ros import TransformBroadcaster, TransformStamped
 from std_msgs.msg import Int16
+from std_msgs.msg import Float32
 from geometry_msgs.msg import Twist
 import serial
-ser = serial.Serial('/dev/ttyACM0', 115200, timeout=1)
+
+ser = serial.Serial('/dev/ttyACM1', 115200, timeout=1)
 
 class PID():
     def __init__(self, Kp, Ki, Kd, highest_pwm, lowest_pwm):
@@ -75,6 +77,7 @@ class DiffTf(Node):
         self.ticks_meter = 27190 #Experiment: 26850 Calculated: 27190
         #self.base_width = float(self.get_parameter('~base_width', 1.3)) # The wheel base width in meters
         self.base_width = 0.38
+        self.robot_base = 0.38
         #self.base_frame_id = self.get_parameter('~base_frame_id','base_link') # the name of the base frame of the robot
         self.base_frame_id = "base_link"
         #self.odom_frame_id = self.get_parameter('~odom_frame_id', 'odom') # the name of the odometry reference frame
@@ -131,12 +134,12 @@ class DiffTf(Node):
         self.applied_left_forward_pwm = 0.0
         self.applied_right_forward_pwm = 0.0
         self.applied_left_aft_pwm = 0
-        self.applied_right_aft_Pwm = 0        
+        self.applied_right_aft_Pwm = 0       
         # PID Object for four Motors, but for direction and target velocity left two motors and right two motors will be same and thus grouped.
-        self.left_forward_pid = PID(Kp=160.0, Ki=60.0, Kd=1.5, highest_pwm=255, lowest_pwm=20)
-        self.right_forward_pid = PID(Kp=160.0, Ki=60.0, Kd=1.5, highest_pwm=255, lowest_pwm=20)
-        self.left_aft_pid = PID(Kp=160.0, Ki=60.0, Kd=1.5, highest_pwm=255, lowest_pwm=20)
-        self.right_aft_pid = PID(Kp=160.0, Ki=60.0, Kd=1.5, highest_pwm=255, lowest_pwm=20)
+        self.left_forward_pid = PID(Kp=120.0, Ki=110.0, Kd= 1.0 , highest_pwm=255, lowest_pwm=90) #KF080F055F060F085G
+        self.right_forward_pid = PID(Kp=120.0, Ki=110.0, Kd= 1.0 , highest_pwm=255, lowest_pwm=60)
+        self.left_aft_pid = PID(Kp=120.0, Ki=110.0, Kd= 1.0 , highest_pwm=255, lowest_pwm=60)
+        self.right_aft_pid = PID(Kp=120.0, Ki=110.0, Kd= 1.0 , highest_pwm=255, lowest_pwm=90)
         
 
         self.send_data = ''
@@ -155,7 +158,7 @@ class DiffTf(Node):
         self.create_subscription(Twist,'/cmd_vel',self.twistCallback, 10)
     
         self.odomPub = self.create_publisher(Odometry, 'odom', qos_profile)
-        self.get_logger().info("publisher creater")
+        self.get_logger().info("publisher created")
         self.odomBroadcaster = TransformBroadcaster(self, qos= qos_profile)
         
         self.odom_trans = TransformStamped()
@@ -163,9 +166,9 @@ class DiffTf(Node):
         self.odom_trans.header.frame_id = self.base_frame_id
         self.odom_trans.child_frame_id = self.odom_frame_id
 
-        self.target_left_wheel_velocity = 0
-        self.target_right_wheel_velocity = 0
-        self.robot_base = 0.38
+        self.target_left_wheel_velocity = 0.0
+        self.target_right_wheel_velocity = 0.0
+        
         self.commanded_linear_velocity = 0.0
         self.commanded_angular_velocity = 0.0
         
@@ -175,6 +178,12 @@ class DiffTf(Node):
         self.create_timer(0.001,self.sendReceiveData)
         self.create_timer(1.0, self.showData)
         
+        self.motorPwmPub = self.create_publisher(Int16, 'motor_pwm', qos_profile)
+        self.motorTargetVel = self.create_publisher(Float32, 'TargetVel', qos_profile)
+        self.motorCurrentVel = self.create_publisher(Float32, 'CurrentVel', qos_profile)
+        
+ 
+    
     def showData(self):
         #print('Left-Right Velocity: ', self.current_left_wheel_velocity, self.current_right_wheel_velocity)
         #print('Left-Right RPM: ', ((self.current_left_wheel_velocity*9.55)/0.06), ((self.current_right_wheel_velocity*9.55)/0.06)) 
@@ -258,6 +267,18 @@ class DiffTf(Node):
 
                 self.applied_right_forward_pwm = self.right_forward_pid.getPidOutput(time_elapsed=elapsed, target_velocity=self.target_right_wheel_velocity, current_velocity=self.current_right_forward_velocity)
                 self.applied_right_aft_Pwm = self.right_aft_pid.getPidOutput(time_elapsed=elapsed, target_velocity=self.target_right_wheel_velocity, current_velocity=self.current_right_aft_velocity)
+                
+                motor_pwm_msg = Int16()
+                motor_pwm_msg.data = int(self.applied_right_forward_pwm)
+                self.motorPwmPub.publish(motor_pwm_msg)
+
+                motor_target_velocity = Float32()
+                motor_target_velocity.data = self.target_right_wheel_velocity
+                self.motorTargetVel.publish(motor_target_velocity)
+
+                motor_current_velocity = Float32()
+                motor_current_velocity.data = self.current_right_forward_velocity
+                self.motorCurrentVel.publish(motor_current_velocity)
                 
                 # Direction of the Robot 
                 if(self.target_left_wheel_velocity > 0.0):
@@ -387,6 +408,10 @@ def euler_to_quaternion(roll, pitch, yaw):
     qz = cos(roll/2) * cos(pitch/2) * sin(yaw/2) - sin(roll/2) * sin(pitch/2) * cos(yaw/2)
     qw = cos(roll/2) * cos(pitch/2) * cos(yaw/2) + sin(roll/2) * sin(pitch/2) * sin(yaw/2)
     return Quaternion(x=qx, y=qy, z=qz, w=qw)
+
+
+
+
 
 def main(args = None):
     rclpy.init(args = args)
