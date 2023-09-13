@@ -1,5 +1,10 @@
 #!/usr/bin/env python
-#https://github.com/jfstepha/differential-drive/blob/master/scripts/diff_tf.py#L192
+'''
+https://www.github.com/Nabilphysics
+Syed Razwanul Haque(Nabil)
+Heavily Inspired from below repo. Some of the code from this repo used as it is.
+https://github.com/jfstepha/differential-drive/blob/master/scripts/diff_tf.py#L192
+'''
 import rclpy.time
 import rclpy
 import rclpy.duration
@@ -179,11 +184,12 @@ class DiffTf(Node):
         print('######')
    
     def sendReceiveData(self):
-        #Send to Arduino Serial - Data Format
-        #StartChar:Left_Forward_Motor_Direction:PWM:Rigit_Forward_Motor_Direction:PWM:EndChar
-        #self.send_data = 'K'+ self.left_wheel_direction + str(self.applied_forward_left_pwm).zfill(3) + self.right_wheel_direction + str(self.applied_forward_right_pwm).zfill(3) + 'G'
-        self.send_data = 'K'+ 'F' + str(int(self.applied_left_forward_pwm)).zfill(3) + 'F' + str(int(self.applied_right_forward_pwm)).zfill(3) + 'G'
-
+        # Send to Arduino Serial - Data Format
+        # Start_Char : Left_Forward_Motor_Direction : PWM : Right_Forward_Motor_Direction : PWM : Left_Aft_Motor_Direction : PWM : Right_Aft_Motor_Direction : PWM : End_Char
+        self.send_data = 'K'+ self.left_wheel_direction + str(int(self.applied_left_forward_pwm)).zfill(3) + self.right_wheel_direction + str(int(self.applied_right_forward_pwm)).zfill(3) + \
+        self.left_wheel_direction + str(int(self.applied_left_aft_pwm)).zfill(3) + self.right_wheel_direction + str(int(self.applied_right_aft_Pwm)).zfill(3) + 'G'
+        #self.send_data = 'K'+ 'F' + str(int(self.applied_left_forward_pwm)).zfill(3) + 'F' + str(int(self.applied_right_forward_pwm)).zfill(3) + 'G'
+        #self.send_data = 'KF200F200F200F200G'
         ser.write(bytes(self.send_data, 'utf-8'))
         self.serial_raw = ser.readline()
 
@@ -215,29 +221,23 @@ class DiffTf(Node):
                 elapsed = now - self.then
                 self.then = now
                 # calculate odometry
-                if self.enc_left_forward != None:
+                if self.enc_left_forward == None:
                     d_left_forward = 0
                     d_left_aft = 0
                     d_right_forward = 0
                     d_right_aft = 0
-                    print('Zero')
-                    
+            
                 else:
                     d_left_forward = (self.left_forward - self.enc_left_forward) / self.ticks_meter
-                    print(d_left_forward)
                     d_left_aft = (self.left_aft - self.enc_left_aft) / self.ticks_meter
                     d_right_forward = (self.right_forward - self.enc_right_forward) / self.ticks_meter
                     d_right_aft = (self.right_aft - self.enc_right_aft)/self.ticks_meter
-                    '''
-                    d_left = (self.forward_left_motor_tick - self.enc_left) / self.ticks_meter
-                    d_right = (self.forward_right_motor_tick - self.enc_right) / self.ticks_meter
-                    '''
-                self.enc_left = self.left_forward
-                self.enc_right = self.right_forward
-                '''
-                self.enc_left = self.forward_left_motor_tick
-                self.enc_right = self.forward_right_motor_tick
-                '''
+                    
+                self.enc_left_forward = self.left_forward
+                self.enc_left_aft = self.left_aft
+                self.enc_right_forward = self.right_forward
+                self.enc_right_aft = self.right_aft
+             
                 d_left = (d_left_forward + d_left_aft)/2
                 d_right = (d_right_forward + d_right_aft)/2
                 # distance traveled is the average of the two wheels 
@@ -249,7 +249,6 @@ class DiffTf(Node):
                 self.current_left_aft_velocity = d_left_aft/elapsed
                 self.current_right_forward_velocity = d_right_forward/elapsed
                 self.current_right_aft_velocity = d_right_aft/elapsed
-                #print('d_left - d_right: ', d_left, d_right)
                 
                 self.dx = d / elapsed
                 self.dr = th / elapsed
@@ -259,32 +258,29 @@ class DiffTf(Node):
 
                 self.applied_right_forward_pwm = self.right_forward_pid.getPidOutput(time_elapsed=elapsed, target_velocity=self.target_right_wheel_velocity, current_velocity=self.current_right_forward_velocity)
                 self.applied_right_aft_Pwm = self.right_aft_pid.getPidOutput(time_elapsed=elapsed, target_velocity=self.target_right_wheel_velocity, current_velocity=self.current_right_aft_velocity)
-
-                if(self.target_left_wheel_velocity > 0.0):
-                    self.forward_left_wheel_direction = 'F'
-                if(self.target_left_wheel_velocity < 0.0):
-                    self.forward_left_wheel_direction = 'R'
-                if(self.target_left_wheel_velocity == 0.0):
-                    self.forward_left_wheel_direction = 'S'   
                 
-                #self.applied_right_wheel_pwm = self.forward_right_pid.getPidOutput(time_elapsed=elapsed, target_velocity=self.target_right_wheel_velocity, current_velocity=self.current_right_wheel_velocity)
-
+                # Direction of the Robot 
+                if(self.target_left_wheel_velocity > 0.0):
+                    self.left_wheel_direction = 'F'
+                if(self.target_left_wheel_velocity < 0.0):
+                    self.left_wheel_direction = 'R'
+                if(self.target_left_wheel_velocity == 0.0):
+                    self.left_wheel_direction = 'S'   
+    
                 
                 if(self.target_right_wheel_velocity > 0.0):
-                    self.forward_right_wheel_direction = 'F'
-                    #self.applied_right_wheel_pwm = 255
+                    self.right_wheel_direction = 'F'
                 if(self.target_right_wheel_velocity < 0.0):
-                    self.forward_right_wheel_direction = 'R'
-                    #self.applied_right_wheel_pwm = 255
+                    self.right_wheel_direction = 'R'
                 if(self.target_right_wheel_velocity == 0.0):
-                    self.forward_right_wheel_direction = 'S'  
+                    self.right_wheel_direction = 'S'  
                
                
                 if (d != 0):
-                    # calculate distance traveled in x and y
+                    # Calculate the Distance Traveled in x and y
                     x = cos( th ) * d
                     y = -sin( th ) * d
-                    # calculate the final position of the robot
+                    # Calculate the final position of the Robot
                     # Equation for converting a point in local reference frame to global reference frame
                     #VxG = (X_local * cos(γ)) – (Y_local * sin(γ)) 
                     #VyG = (X_local * sin(γ)) + (Y_local * cos(γ))
@@ -383,8 +379,7 @@ class DiffTf(Node):
         self.commanded_linear_velocity = msg.linear.x
         self.commanded_angular_velocity = msg.angular.z
         self.simulated_velocity = msg.linear.y
-        #print('Com_linear_velocity: ', self.commanded_linear_velocity )
-        #print('Com_angular_velocity: ',self.commanded_angular_velocity)
+   
 
 def euler_to_quaternion(roll, pitch, yaw):
     qx = sin(roll/2) * cos(pitch/2) * cos(yaw/2) - cos(roll/2) * sin(pitch/2) * sin(yaw/2)
