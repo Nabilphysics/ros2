@@ -66,18 +66,12 @@ class PID():
 
 class DiffTf(Node):
     def __init__(self):
-        super().__init__('diff_tf_pid_v4')
+        super().__init__('Differential_Drive_Robot')
         qos_profile = QoSProfile(depth=10)
         self.nodename = self.get_name()
         self.get_logger().info("-I- %s started" % self.nodename)
-        #### parameters #######
-        #self.rate = self.get_parameter("~rate",10.0)  # the rate at which to publish the transform
-        self.rate = 10.0
-        #self.ticks_meter = float(self.get_parameter('ticks_meter', 250))  # The number of wheel encoder ticks per meter of travel
         self.ticks_meter = 27190 #Experiment: 26850 Calculated: 27190
-        #self.base_width = float(self.get_parameter('~base_width', 1.3)) # The wheel base width in meters
-        self.base_width = 0.38
-        self.robot_base = 0.38
+        self.base_width = 0.38 # in Meter
         #self.base_frame_id = self.get_parameter('~base_frame_id','base_link') # the name of the base frame of the robot
         self.base_frame_id = "base_link"
         #self.odom_frame_id = self.get_parameter('~odom_frame_id', 'odom') # the name of the odometry reference frame
@@ -220,17 +214,15 @@ class DiffTf(Node):
         self.rightAftEncoderCount(self.right_aft_motor_tick)
 
     def targetWheelVelocity(self):
-        
-        self.target_left_wheel_velocity = self.commanded_linear_velocity * 1.0 - ((self.commanded_angular_velocity * self.robot_base)/2)
-        self.target_right_wheel_velocity = self.commanded_linear_velocity * 1.0 + ((self.commanded_angular_velocity * self.robot_base)/2)
+        self.target_left_wheel_velocity = self.commanded_linear_velocity * 1.0 - ((self.commanded_angular_velocity * self.base_width)/2)
+        self.target_right_wheel_velocity = self.commanded_linear_velocity * 1.0 + ((self.commanded_angular_velocity * self.base_width)/2)
         
     def update(self):
-            now = ((ROSClock().now().to_msg().sec)+((ROSClock().now().to_msg().nanosec)/1e9))
-            if now > self.t_next:
+                now = ((ROSClock().now().to_msg().sec)+((ROSClock().now().to_msg().nanosec)/1e9))
                 elapsed = now - self.then
                 self.then = now
                 # calculate odometry
-                if self.enc_left_forward == None:
+                if (self.enc_left_forward or self.enc_right_forward) == None:
                     d_left_forward = 0
                     d_left_aft = 0
                     d_right_forward = 0
@@ -269,6 +261,7 @@ class DiffTf(Node):
                 self.applied_right_forward_pwm = self.right_forward_pid.getPidOutput(time_elapsed=elapsed, target_velocity=self.target_right_wheel_velocity, current_velocity=self.current_right_forward_velocity)
                 self.applied_right_aft_Pwm = self.right_aft_pid.getPidOutput(time_elapsed=elapsed, target_velocity=self.target_right_wheel_velocity, current_velocity=self.current_right_aft_velocity)
                 
+                # Publishing Data for Viewing in Floxglove Studio for Debugging
                 motor_pwm_msg = Int16()
                 motor_pwm_msg.data = int(self.applied_right_forward_pwm)
                 self.motorPwmPub.publish(motor_pwm_msg)
@@ -322,14 +315,14 @@ class DiffTf(Node):
                 self.odom_trans.transform.rotation = euler_to_quaternion(0.0, 0.0, self.th)
                 # send the joint state and transform
                 self.odomBroadcaster.sendTransform(self.odom_trans)
-               
+                '''
                 # publish the odom information
                 quaternion = Quaternion()
                 quaternion.x = 0.0
                 quaternion.y = 0.0
                 quaternion.z = sin(self.th/2)
                 quaternion.w = cos(self.th/2)
-               
+                '''
                 odom = Odometry()
                 odom.header.stamp = self.get_clock().now().to_msg()
                 odom.header.frame_id = self.odom_frame_id
@@ -337,7 +330,7 @@ class DiffTf(Node):
                 odom.pose.pose.position.y = self.y
                 odom.pose.pose.position.z = 0.0
                 
-                odom.pose.pose.orientation = quaternion
+                odom.pose.pose.orientation = euler_to_quaternion(0.0, 0.0, self.th)
                 odom.child_frame_id = self.base_frame_id
                 odom.twist.twist.linear.x = self.dx
         
