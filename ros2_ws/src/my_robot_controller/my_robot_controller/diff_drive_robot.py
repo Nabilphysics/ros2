@@ -10,6 +10,7 @@ import rclpy
 import rclpy.duration
 from rclpy.clock import Clock, ROSClock
 from math import sin, cos, pi
+from pid import PID
 
 from rclpy.node import Node
 from geometry_msgs.msg import Quaternion
@@ -24,44 +25,7 @@ import serial
 
 ser = serial.Serial('/dev/ttyACM0', 115200, timeout=1)
 
-class PID():
-    def __init__(self, Kp, Ki, Kd, highest_pwm, lowest_pwm):
-        self.wheel_error = 0.0 
-        self.integral = 0.0
-        self.derivative = 0.0
-        self.previous_error = 0.0
-        self.applied_wheel_pwm = 0
-        self.Kp = Kp
-        self.Ki = Ki
-        self.Kd = Kd
-        self.highest_pwm = highest_pwm
-        self.lowest_pwm = lowest_pwm
-    
-    def getPidOutput(self, time_elapsed, target_velocity, current_velocity):
-            
-        self.wheel_error = abs(target_velocity) - abs(current_velocity)
-        
-        self.integral = self.integral + (self.wheel_error * self.Ki* time_elapsed)
-        
-        if(self.integral > self.highest_pwm):
-            self.integral = self.highest_pwm
-        elif(self.integral < self.lowest_pwm):
-            self.integral = self.lowest_pwm
-        
-        self.derivative = (self.wheel_error - self.previous_error)/time_elapsed
-        self.applied_wheel_pwm = (self.Kp * self.wheel_error) + (self.integral) + (self.Kd * self.derivative)
-        
-        if self.applied_wheel_pwm > self.highest_pwm:
-            self.applied_wheel_pwm = self.highest_pwm
-        
-        elif self.applied_wheel_pwm < self.lowest_pwm:
-            self.applied_wheel_pwm = self.lowest_pwm
-        
-        if target_velocity == 0.0:
-            self.applied_wheel_pwm = 0
-            self.integral = 0.0
-        self.previous_error = self.wheel_error 
-        return self.applied_wheel_pwm 
+
 
 
 class DiffTf(Node):
@@ -143,23 +107,21 @@ class DiffTf(Node):
         self.left_aft_motor_tick = 0
         self.right_forward_motor_tick = 0
         self.right_aft_motor_tick = 0
-        
         # ----- Encoder Related Varibale -- END
+        self.left_wheel_state = 0.0
         self.then = ((ROSClock().now().to_msg().sec)+((ROSClock().now().to_msg().nanosec)/1e9))
         # subscriptions
-        #self.create_subscription(Int16,'lwheel',self.lwheelCallback, 10)
-        #self.create_subscription(Int16,'rwheel',self.rwheelCallback, 10)
         self.create_subscription(Twist,'/cmd_vel',self.twistCallback, 10)
     
         self.odomPub = self.create_publisher(Odometry, 'odom', qos_profile)
         self.get_logger().info("publisher created")
         self.odomBroadcaster = TransformBroadcaster(self, qos= qos_profile)
         
+        
         self.odom_trans = TransformStamped()
-        #self.odom_trans.header.frame_id = 'odom'
-        self.odom_trans.header.frame_id = self.base_frame_id
-        self.odom_trans.child_frame_id = self.odom_frame_id
-
+        self.odom_trans.header.frame_id = self.odom_frame_id
+        self.odom_trans.child_frame_id = self.base_frame_id
+        
         self.target_left_wheel_velocity = 0.0
         self.target_right_wheel_velocity = 0.0
         
@@ -172,9 +134,12 @@ class DiffTf(Node):
         self.create_timer(0.001,self.sendReceiveData)
         self.create_timer(1.0, self.showData)
         
+        self.joint_pub = self.create_publisher(JointState, 'joint_states', qos_profile)
         self.motorPwmPub = self.create_publisher(Int16, 'motor_pwm', qos_profile)
         self.motorTargetVel = self.create_publisher(Float32, 'TargetVel', qos_profile)
         self.motorCurrentVel = self.create_publisher(Float32, 'CurrentVel', qos_profile)
+
+        self.joint_state = JointState()
         
  
     
@@ -230,17 +195,27 @@ class DiffTf(Node):
             
                 else:
                     d_left_forward = (self.left_forward - self.enc_left_forward) / self.ticks_meter
+                    
                     d_left_aft = (self.left_aft - self.enc_left_aft) / self.ticks_meter
                     d_right_forward = (self.right_forward - self.enc_right_forward) / self.ticks_meter
                     d_right_aft = (self.right_aft - self.enc_right_aft)/self.ticks_meter
-                    
+                
+                    self.left_wheel_state = self.left_wheel_state + (((self.left_forward - self.enc_left_forward)/10230))*3.14
+                if(self.left_wheel_state > 3.14*2):
+                    self.left_wheel_state = 0.0
+                if(self.left_wheel_state < -3.14*2):
+                    self.left_wheel_state = 0.0
+
                 self.enc_left_forward = self.left_forward
                 self.enc_left_aft = self.left_aft
                 self.enc_right_forward = self.right_forward
                 self.enc_right_aft = self.right_aft
              
-                d_left = (d_left_forward + d_left_aft)/2
+                #d_left = (d_left_forward + d_left_aft)/2
+                d_left = (d_left_forward)/2
                 d_right = (d_right_forward + d_right_aft)/2
+
+                #print((self.left_aft+self.left_forward)/2, (self.right_aft+self.right_forward)/2)
                 # distance traveled is the average of the two wheels 
                 d = ( d_left + d_right ) / 2
                 # this approximation works (in radians) for small angles
@@ -304,25 +279,27 @@ class DiffTf(Node):
                 if( th != 0):
                     self.th = self.th + th
                 
-                
+                time_now = self.get_clock().now()
                 #publish odom transform information
-                self.odom_trans.header.stamp = self.get_clock().now().to_msg()
-                self.odom_trans.header.frame_id = self.odom_frame_id
-                self.odom_trans.child_frame_id = self.base_frame_id
+                self.odom_trans.header.stamp = time_now.to_msg()
                 self.odom_trans.transform.translation.x = self.x
                 self.odom_trans.transform.translation.y = self.y
                 self.odom_trans.transform.translation.z = 0.0
                 self.odom_trans.transform.rotation = euler_to_quaternion(0.0, 0.0, self.th)
+                
+                left_wheel = self.left_wheel_state
+                left_wheel = round(left_wheel, 2)
+                print(left_wheel)
+                # Get Data and Update joint_state
+                self.joint_state.header.stamp = time_now.to_msg()
+                self.joint_state.name = ['base_right_wheel_joint', 'base_left_wheel_joint']
+                self.joint_state.position = [2.14, left_wheel]
+               
+                
                 # send the joint state and transform
+                self.joint_pub.publish(self.joint_state)
                 self.odomBroadcaster.sendTransform(self.odom_trans)
-                '''
-                # publish the odom information
-                quaternion = Quaternion()
-                quaternion.x = 0.0
-                quaternion.y = 0.0
-                quaternion.z = sin(self.th/2)
-                quaternion.w = cos(self.th/2)
-                '''
+              
                 odom = Odometry()
                 odom.header.stamp = self.get_clock().now().to_msg()
                 odom.header.frame_id = self.odom_frame_id
@@ -338,6 +315,8 @@ class DiffTf(Node):
                 odom.twist.twist.angular.z = self.dr
                 
                 self.odomPub.publish(odom)
+
+                
                     
              
     def leftForwardEncoderCount(self, msg):

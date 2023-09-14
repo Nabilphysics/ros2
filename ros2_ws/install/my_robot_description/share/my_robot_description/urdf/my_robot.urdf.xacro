@@ -1,7 +1,1 @@
-<?xml version="1.0"?>
-<robot name="my_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
-
-    <xacro:include filename="common_properties.xacro"/>
-    <xacro:include filename="mobile_base.xacro"/>
-    <xacro:include filename="mobile_base_gazebo.xacro"/>
-</robot>
+/home/nabil/ros2_ws/src/my_robot_description/urdf/my_robot.urdf.xacro

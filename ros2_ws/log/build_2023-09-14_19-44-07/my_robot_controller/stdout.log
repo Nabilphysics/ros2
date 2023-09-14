@@ -1,0 +1,25 @@
+running egg_info
+writing ../../build/my_robot_controller/my_robot_controller.egg-info/PKG-INFO
+writing dependency_links to ../../build/my_robot_controller/my_robot_controller.egg-info/dependency_links.txt
+writing entry points to ../../build/my_robot_controller/my_robot_controller.egg-info/entry_points.txt
+writing requirements to ../../build/my_robot_controller/my_robot_controller.egg-info/requires.txt
+writing top-level names to ../../build/my_robot_controller/my_robot_controller.egg-info/top_level.txt
+reading manifest file '../../build/my_robot_controller/my_robot_controller.egg-info/SOURCES.txt'
+writing manifest file '../../build/my_robot_controller/my_robot_controller.egg-info/SOURCES.txt'
+running build
+running build_py
+copying my_robot_controller/pid.py -> /home/nabil/ros2_ws/build/my_robot_controller/build/lib/my_robot_controller
+copying my_robot_controller/diff_drive_robot.py -> /home/nabil/ros2_ws/build/my_robot_controller/build/lib/my_robot_controller
+running install
+running install_lib
+copying /home/nabil/ros2_ws/build/my_robot_controller/build/lib/my_robot_controller/pid.py -> /home/nabil/ros2_ws/install/my_robot_controller/lib/python3.10/site-packages/my_robot_controller
+copying /home/nabil/ros2_ws/build/my_robot_controller/build/lib/my_robot_controller/diff_drive_robot.py -> /home/nabil/ros2_ws/install/my_robot_controller/lib/python3.10/site-packages/my_robot_controller
+byte-compiling /home/nabil/ros2_ws/install/my_robot_controller/lib/python3.10/site-packages/my_robot_controller/pid.py to pid.cpython-310.pyc
+byte-compiling /home/nabil/ros2_ws/install/my_robot_controller/lib/python3.10/site-packages/my_robot_controller/diff_drive_robot.py to diff_drive_robot.cpython-310.pyc
+running install_data
+running install_egg_info
+removing '/home/nabil/ros2_ws/install/my_robot_controller/lib/python3.10/site-packages/my_robot_controller-0.0.0-py3.10.egg-info' (and everything under it)
+Copying ../../build/my_robot_controller/my_robot_controller.egg-info to /home/nabil/ros2_ws/install/my_robot_controller/lib/python3.10/site-packages/my_robot_controller-0.0.0-py3.10.egg-info
+running install_scripts
+Installing diff_drive_robot script to /home/nabil/ros2_ws/install/my_robot_controller/lib/my_robot_controller
+writing list of installed files to '/home/nabil/ros2_ws/build/my_robot_controller/install.log'
