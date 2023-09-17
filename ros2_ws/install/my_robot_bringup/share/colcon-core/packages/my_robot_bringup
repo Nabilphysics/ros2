@@ -1,1 +1,1 @@
-gazebo_ros:my_robot_description:robot_state_publisher
+gazebo_ros:my_robot_description:pid:robot_state_publisher

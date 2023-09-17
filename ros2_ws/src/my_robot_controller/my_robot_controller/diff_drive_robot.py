@@ -10,7 +10,7 @@ import rclpy
 import rclpy.duration
 from rclpy.clock import Clock, ROSClock
 from math import sin, cos, pi
-from pid import PID
+#from pid import * TODO: Solve class import problem
 
 from rclpy.node import Node
 from geometry_msgs.msg import Quaternion
@@ -200,7 +200,7 @@ class DiffTf(Node):
                     d_right_forward = (self.right_forward - self.enc_right_forward) / self.ticks_meter
                     d_right_aft = (self.right_aft - self.enc_right_aft)/self.ticks_meter
                 
-                    self.left_wheel_state = self.left_wheel_state + (((self.left_forward - self.enc_left_forward)/10230))*3.14
+                    self.left_wheel_state = self.left_wheel_state + (((self.right_forward - self.enc_right_forward) /10230))*3.14
                 if(self.left_wheel_state > 3.14*2):
                     self.left_wheel_state = 0.0
                 if(self.left_wheel_state < -3.14*2):
@@ -293,7 +293,7 @@ class DiffTf(Node):
                 # Get Data and Update joint_state
                 self.joint_state.header.stamp = time_now.to_msg()
                 self.joint_state.name = ['base_right_wheel_joint', 'base_left_wheel_joint']
-                self.joint_state.position = [2.14, left_wheel]
+                self.joint_state.position = [2.14, left_wheel*2]
                
                 
                 # send the joint state and transform
@@ -376,7 +376,45 @@ def euler_to_quaternion(roll, pitch, yaw):
     qw = cos(roll/2) * cos(pitch/2) * cos(yaw/2) + sin(roll/2) * sin(pitch/2) * sin(yaw/2)
     return Quaternion(x=qx, y=qy, z=qz, w=qw)
 
-
+class PID():
+    def __init__(self, Kp, Ki, Kd, highest_pwm, lowest_pwm):
+        self.wheel_error = 0.0 
+        self.integral = 0.0
+        self.derivative = 0.0
+        self.previous_error = 0.0
+        self.applied_wheel_pwm = 0
+        self.Kp = Kp
+        self.Ki = Ki
+        self.Kd = Kd
+        self.highest_pwm = highest_pwm
+        self.lowest_pwm = lowest_pwm
+    
+    def getPidOutput(self, time_elapsed, target_velocity, current_velocity):
+            
+        self.wheel_error = abs(target_velocity) - abs(current_velocity)
+        
+        self.integral = self.integral + (self.wheel_error * self.Ki* time_elapsed)
+        
+        if(self.integral > self.highest_pwm):
+            self.integral = self.highest_pwm
+        elif(self.integral < self.lowest_pwm):
+            self.integral = self.lowest_pwm
+        
+        self.derivative = (self.wheel_error - self.previous_error)/time_elapsed
+        self.applied_wheel_pwm = (self.Kp * self.wheel_error) + (self.integral) + (self.Kd * self.derivative)
+        
+        if self.applied_wheel_pwm > self.highest_pwm:
+            self.applied_wheel_pwm = self.highest_pwm
+        
+        elif self.applied_wheel_pwm < self.lowest_pwm:
+            self.applied_wheel_pwm = self.lowest_pwm
+        
+        if target_velocity == 0.0:
+            self.applied_wheel_pwm = 0
+            self.integral = 0.0
+        self.previous_error = self.wheel_error 
+        return self.applied_wheel_pwm 
+    
 def main(args = None):
     rclpy.init(args = args)
     node = DiffTf()

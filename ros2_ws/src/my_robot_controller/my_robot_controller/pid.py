@@ -1,3 +1,7 @@
+'''
+Written by Syed Razwanul Haque (Nabil)
+https://www.github.com/Nabilphysics
+'''
 class PID():
     def __init__(self, Kp, Ki, Kd, highest_pwm, lowest_pwm):
         self.wheel_error = 0.0 
