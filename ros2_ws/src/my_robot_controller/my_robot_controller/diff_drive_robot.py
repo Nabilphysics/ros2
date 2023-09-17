@@ -2,6 +2,7 @@
 '''
 https://www.github.com/Nabilphysics
 Syed Razwanul Haque(Nabil)
+.
 Heavily Inspired from below repo. Some of the code from this repo used as it is.
 https://github.com/jfstepha/differential-drive/blob/master/scripts/diff_tf.py#L192
 '''
@@ -12,7 +13,6 @@ from rclpy.clock import Clock, ROSClock
 from math import sin, cos, pi
 from my_robot_controller.submodules.pid import PID 
 from my_robot_controller.submodules.encoder_to_wheel_jointstate import WheelState
-
 
 from rclpy.node import Node
 from geometry_msgs.msg import Quaternion
@@ -26,9 +26,6 @@ from geometry_msgs.msg import Twist
 import serial
 
 ser = serial.Serial('/dev/ttyACM0', 115200, timeout=1)
-
-
-
 
 class DiffTf(Node):
     def __init__(self):
@@ -51,7 +48,6 @@ class DiffTf(Node):
         self.encoder_low_wrap = ((self.encoder_max - self.encoder_min) * 0.3 + self.encoder_min) 
         #self.encoder_high_wrap = self.get_parameter('wheel_high_wrap', (self.encoder_max - self.encoder_min) * 0.7 + self.encoder_min )
         self.encoder_high_wrap = ((self.encoder_max - self.encoder_min) * 0.7 + self.encoder_min )
-    
         
         # previous encoder value
         self.prv_enc_left_forward = None        # wheel encoder readings
@@ -75,7 +71,6 @@ class DiffTf(Node):
         self.prev_r_f_encoder = 0
         self.prev_r_a_encoder = 0
 
-        
         self.x = 0.0                  # position in xy plane 
         self.y = 0.0
         self.th = 0.0
@@ -101,14 +96,12 @@ class DiffTf(Node):
         self.left_aft_pid = PID(Kp=120.0, Ki=110.0, Kd= 1.0 , highest_pwm=255, lowest_pwm=60)
         self.right_aft_pid = PID(Kp=120.0, Ki=110.0, Kd= 1.0 , highest_pwm=255, lowest_pwm=90)
         
-        #Wheel Joint State Calculation
+        #Wheel Joint State Calculation Object
         self.left_forward_wheel = WheelState(radian_per_rotate= 6.2832, enc_tick_rotate= self.wheel_one_rev_ticks, float_round= 2)
         self.left_aft_wheel = WheelState(radian_per_rotate= 6.2832, enc_tick_rotate= self.wheel_one_rev_ticks, float_round= 2)
         self.right_forward_wheel = WheelState(radian_per_rotate= 6.2832, enc_tick_rotate= self.wheel_one_rev_ticks, float_round= 2)
         self.right_aft_wheel = WheelState(radian_per_rotate= 6.2832, enc_tick_rotate= self.wheel_one_rev_ticks, float_round= 2)
         
-
-
         self.send_data = ''
         self.serial_raw = ''
         # --- Encoder Related Varibale ---
@@ -153,8 +146,6 @@ class DiffTf(Node):
         self.motorCurrentVel = self.create_publisher(Float32, 'CurrentVel', qos_profile)
   
         self.joint_state = JointState()
-        
-        self.aa = 0.0
     
     def showData(self):
         #print('Left-Right Velocity: ', self.current_left_wheel_velocity, self.current_right_wheel_velocity)
@@ -301,9 +292,6 @@ class DiffTf(Node):
                 self.joint_state.header.stamp = time_now.to_msg()
                 self.joint_state.name = ['base_right_forward_wheel_joint', 'base_right_aft_wheel_joint','base_left_forward_wheel_joint','base_left_aft_wheel_joint']
                 self.joint_state.position = [self.right_forward_wheel_state, self.right_aft_wheel_state, self.left_forward_wheel_state, self.left_aft_wheel_state]
-                
-
-                #self.joint_state.position = [round(self.right_forward_wheel_state,2), round(self.right_aft_wheel_state,2), round(self.left_forward_wheel_state,2), round(self.left_aft_wheel_state,2)]
                 
                 # send the joint state and transform
                 self.joint_pub.publish(self.joint_state)
