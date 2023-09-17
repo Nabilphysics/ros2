@@ -10,7 +10,9 @@ import rclpy
 import rclpy.duration
 from rclpy.clock import Clock, ROSClock
 from math import sin, cos, pi
-from my_robot_controller.submodules.pid import * 
+from my_robot_controller.submodules.pid import PID 
+from my_robot_controller.submodules.encoder_to_wheel_jointstate import WheelState
+
 
 from rclpy.node import Node
 from geometry_msgs.msg import Quaternion
@@ -49,19 +51,18 @@ class DiffTf(Node):
         self.encoder_low_wrap = ((self.encoder_max - self.encoder_min) * 0.3 + self.encoder_min) 
         #self.encoder_high_wrap = self.get_parameter('wheel_high_wrap', (self.encoder_max - self.encoder_min) * 0.7 + self.encoder_min )
         self.encoder_high_wrap = ((self.encoder_max - self.encoder_min) * 0.7 + self.encoder_min )
-        self.t_delta = 0.01
-        self.t_next =  ((ROSClock().now().to_msg().sec)+((ROSClock().now().to_msg().nanosec)/1e9)) + self.t_delta
+    
         
-        # internal data
-        self.enc_left_forward = None        # wheel encoder readings
-        self.enc_left_aft = None
-        self.enc_right_forward = None
-        self.enc_right_aft = None
-        
-        self.left_forward = 0               # actual values coming back from robot
-        self.left_aft = 0
-        self.right_forward = 0
-        self.right_aft = 0
+        # previous encoder value
+        self.prv_enc_left_forward = None        # wheel encoder readings
+        self.prv_enc_left_aft = None
+        self.prv_enc_right_forward = None
+        self.prv_enc_right_aft = None
+        # Current Encoder value
+        self.curr_enc_left_forward = 0               
+        self.curr_enc_left_aft = 0
+        self.curr_enc_right_forward = 0
+        self.curr_enc_right_aft = 0
         
         #self.lmult = 0
         self.l_f_mult = 0
@@ -100,6 +101,13 @@ class DiffTf(Node):
         self.left_aft_pid = PID(Kp=120.0, Ki=110.0, Kd= 1.0 , highest_pwm=255, lowest_pwm=60)
         self.right_aft_pid = PID(Kp=120.0, Ki=110.0, Kd= 1.0 , highest_pwm=255, lowest_pwm=90)
         
+        #Wheel Joint State Calculation
+        self.left_forward_wheel = WheelState(radian_per_rotate= 6.2832, enc_tick_rotate= self.wheel_one_rev_ticks, float_round= 2)
+        self.left_aft_wheel = WheelState(radian_per_rotate= 6.2832, enc_tick_rotate= self.wheel_one_rev_ticks, float_round= 2)
+        self.right_forward_wheel = WheelState(radian_per_rotate= 6.2832, enc_tick_rotate= self.wheel_one_rev_ticks, float_round= 2)
+        self.right_aft_wheel = WheelState(radian_per_rotate= 6.2832, enc_tick_rotate= self.wheel_one_rev_ticks, float_round= 2)
+        
+
 
         self.send_data = ''
         self.serial_raw = ''
@@ -114,7 +122,7 @@ class DiffTf(Node):
         self.right_forward_wheel_state = 0.0
         self.right_aft_wheel_state = 0.0
 
-        self.then = ((ROSClock().now().to_msg().sec)+((ROSClock().now().to_msg().nanosec)/1e9))
+        self.previous_time = ((ROSClock().now().to_msg().sec)+((ROSClock().now().to_msg().nanosec)/1e9))
         # subscriptions
         self.create_subscription(Twist,'/cmd_vel',self.twistCallback, 10)
     
@@ -143,10 +151,10 @@ class DiffTf(Node):
         self.motorPwmPub = self.create_publisher(Int16, 'motor_pwm', qos_profile)
         self.motorTargetVel = self.create_publisher(Float32, 'TargetVel', qos_profile)
         self.motorCurrentVel = self.create_publisher(Float32, 'CurrentVel', qos_profile)
-
+  
         self.joint_state = JointState()
         
- 
+        self.aa = 0.0
     
     def showData(self):
         #print('Left-Right Velocity: ', self.current_left_wheel_velocity, self.current_right_wheel_velocity)
@@ -171,7 +179,7 @@ class DiffTf(Node):
             serial_decode = self.serial_raw.decode("utf-8","ignore")
             #print(serial_decode) position 0 = right encoder raw value, 1 = left Encoder Raw Value
             serial_split = serial_decode.split(",")
-        
+           
             self.right_forward_motor_tick = int(serial_split[0])
             self.left_forward_motor_tick = int(serial_split[1])
             self.right_aft_motor_tick = int(serial_split[2])
@@ -189,61 +197,40 @@ class DiffTf(Node):
         
     def update(self):
                 now = ((ROSClock().now().to_msg().sec)+((ROSClock().now().to_msg().nanosec)/1e9))
-                elapsed = now - self.then
-                self.then = now
-                # calculate odometry
-                if (self.enc_left_forward or self.enc_right_forward) == None:
+                elapsed = now - self.previous_time
+                self.previous_time = now
+                # Calculate Odometry
+                if (self.prv_enc_left_forward or self.prv_enc_right_forward) == None:
                     d_left_forward = 0
                     d_left_aft = 0
                     d_right_forward = 0
                     d_right_aft = 0
             
                 else:
-                    d_left_forward = (self.left_forward - self.enc_left_forward) / self.ticks_meter
+                    d_left_forward = (self.curr_enc_left_forward - self.prv_enc_left_forward) / self.ticks_meter
+                    d_left_aft = (self.curr_enc_left_aft - self.prv_enc_left_aft) / self.ticks_meter
+                    d_right_forward = (self.curr_enc_right_forward - self.prv_enc_right_forward) / self.ticks_meter
+                    d_right_aft = (self.curr_enc_right_aft - self.prv_enc_right_aft)/self.ticks_meter
                     
-                    d_left_aft = (self.left_aft - self.enc_left_aft) / self.ticks_meter
-                    d_right_forward = (self.right_forward - self.enc_right_forward) / self.ticks_meter
-                    d_right_aft = (self.right_aft - self.enc_right_aft)/self.ticks_meter
+                    self.right_forward_wheel_state = self.right_forward_wheel.getState(self.curr_enc_right_forward, self.prv_enc_right_forward)
+                    self.left_aft_wheel_state = self.left_aft_wheel.getState(self.curr_enc_left_aft, self.prv_enc_left_aft)
+                    self.left_forward_wheel_state = self.left_forward_wheel.getState(self.curr_enc_left_forward, self.prv_enc_left_forward)
+                    self.right_aft_wheel_state = self.right_aft_wheel.getState(self.curr_enc_right_aft, self.prv_enc_right_aft)
                     
-                    self.left_forward_wheel_state = self.left_forward_wheel_state+ (((self.left_forward - self.enc_left_forward) /self.wheel_one_rev_ticks ))*6.2832 #2*pi
-                    self.right_forward_wheel_state = self.right_forward_wheel_state+ (((self.right_forward - self.enc_right_forward) /self.wheel_one_rev_ticks ))*6.2832
-                    self.left_aft_wheel_state = self.left_aft_wheel_state + (((self.left_aft - self.enc_left_aft) /self.wheel_one_rev_ticks )) * 6.2832
-                    self.right_aft_wheel_state = self.right_aft_wheel_state + (((self.right_aft - self.enc_right_aft) /self.wheel_one_rev_ticks ))*6.2832
-                   
-                if(self.left_forward_wheel_state > 6.2832):
-                    self.left_forward_wheel_state = 0.0
-                if(self.left_forward_wheel_state < -6.2832):
-                    self.left_forward_wheel_state = 0.0
-                
-                if(self.right_forward_wheel_state > 6.2832):
-                    self.right_forward_wheel_state = 0.0
-                if(self.right_forward_wheel_state < -6.2832):
-                    self.right_forward_wheel_state = 0.0
-                
-                if(self.left_aft_wheel_state > 6.2832):
-                    self.left_aft_wheel_state = 0.0
-                if(self.left_aft_wheel_state < -6.2832):
-                    self.left_aft_wheel_state = 0.0
-                
-                if(self.right_aft_wheel_state > 6.2832):
-                    self.right_aft_wheel_state = 0.0
-                if(self.right_aft_wheel_state < -6.2832):
-                    self.right_aft_wheel_state = 0.0
-                
-                self.enc_left_forward = self.left_forward
-                self.enc_left_aft = self.left_aft
-                self.enc_right_forward = self.right_forward
-                self.enc_right_aft = self.right_aft
+
+                self.prv_enc_left_forward = self.curr_enc_left_forward
+                self.prv_enc_left_aft = self.curr_enc_left_aft
+                self.prv_enc_right_forward = self.curr_enc_right_forward
+                self.prv_enc_right_aft = self.curr_enc_right_aft
              
                 d_left = (d_left_forward + d_left_aft)/2
                 d_right = (d_right_forward + d_right_aft)/2
 
-                #print((self.left_aft+self.left_forward)/2, (self.right_aft+self.right_forward)/2)
                 # distance traveled is the average of the two wheels 
                 d = ( d_left + d_right ) / 2
+                
                 # this approximation works (in radians) for small angles
                 th = ( d_right - d_left ) / self.base_width
-                #th = (d_left - d_right ) / self.base_width
                 # calculate velocities
                 self.current_left_forward_velocity = d_left_forward/elapsed
                 self.current_left_aft_velocity = d_left_aft/elapsed
@@ -310,15 +297,13 @@ class DiffTf(Node):
                 self.odom_trans.transform.translation.z = 0.0
                 self.odom_trans.transform.rotation = euler_to_quaternion(0.0, 0.0, self.th)
                 
-                #left_wheel = self.left_wheel_state
-                #left_wheel = round(left_wheel, 2)
-                #print('Left Wheel -- :',left_wheel)
-
-                #right_wheel = round(self.right_wheel_state, 2)
-                # Get Data and Update joint_state
+                
                 self.joint_state.header.stamp = time_now.to_msg()
                 self.joint_state.name = ['base_right_forward_wheel_joint', 'base_right_aft_wheel_joint','base_left_forward_wheel_joint','base_left_aft_wheel_joint']
-                self.joint_state.position = [round(self.right_forward_wheel_state,2), round(self.right_aft_wheel_state,2), round(self.left_forward_wheel_state,2), round(self.left_aft_wheel_state,2)]
+                self.joint_state.position = [self.right_forward_wheel_state, self.right_aft_wheel_state, self.left_forward_wheel_state, self.left_aft_wheel_state]
+                
+
+                #self.joint_state.position = [round(self.right_forward_wheel_state,2), round(self.right_aft_wheel_state,2), round(self.left_forward_wheel_state,2), round(self.left_aft_wheel_state,2)]
                 
                 # send the joint state and transform
                 self.joint_pub.publish(self.joint_state)
@@ -351,7 +336,7 @@ class DiffTf(Node):
         if (enc > self.encoder_high_wrap and self.prev_l_f_encoder < self.encoder_low_wrap):
             self.l_f_mult = self.l_f_mult - 1
             
-        self.left_forward = 1.0 * (enc + self.l_f_mult * (self.encoder_max - self.encoder_min)) 
+        self.curr_enc_left_forward = 1.0 * (enc + self.l_f_mult * (self.encoder_max - self.encoder_min)) 
         self.prev_l_f_encoder = enc
         
     def rightForwardEncoderCount(self, msg):
@@ -362,7 +347,7 @@ class DiffTf(Node):
         if(enc > self.encoder_high_wrap and self.prev_r_f_encoder < self.encoder_low_wrap):
             self.r_f_mult = self.r_f_mult - 1
             
-        self.right_forward = 1.0 * (enc + self.r_f_mult * (self.encoder_max - self.encoder_min))
+        self.curr_enc_right_forward = 1.0 * (enc + self.r_f_mult * (self.encoder_max - self.encoder_min))
         self.prev_r_f_encoder = enc
     
     def leftAftEncoderCount(self, msg):
@@ -373,7 +358,7 @@ class DiffTf(Node):
         if(enc > self.encoder_high_wrap and self.prev_l_a_encoder < self.encoder_low_wrap):
             self.l_a_mult = self.l_a_mult - 1
             
-        self.left_aft = 1.0 * (enc + self.l_a_mult * (self.encoder_max - self.encoder_min))
+        self.curr_enc_left_aft = 1.0 * (enc + self.l_a_mult * (self.encoder_max - self.encoder_min))
         self.prev_l_a_encoder = enc
 
     def rightAftEncoderCount(self, msg):
@@ -384,7 +369,7 @@ class DiffTf(Node):
         if(enc > self.encoder_high_wrap and self.prev_r_a_encoder < self.encoder_low_wrap):
             self.r_a_mult = self.r_a_mult - 1
             
-        self.right_aft = 1.0 * (enc + self.r_a_mult * (self.encoder_max - self.encoder_min))
+        self.curr_enc_right_aft = 1.0 * (enc + self.r_a_mult * (self.encoder_max - self.encoder_min))
         self.prev_r_a_encoder = enc
     
     def twistCallback(self, msg = Twist):
