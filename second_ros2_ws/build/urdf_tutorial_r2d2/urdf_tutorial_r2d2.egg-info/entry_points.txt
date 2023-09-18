@@ -1,5 +1,0 @@
-[console_scripts]
-state_publisher = urdf_tutorial_r2d2.state_publisher:main
-state_publisher_fixed = urdf_tutorial_r2d2.state_publisher_fixed:main
-state_publisher_v2 = urdf_tutorial_r2d2.state_publisher_v2:main
-
