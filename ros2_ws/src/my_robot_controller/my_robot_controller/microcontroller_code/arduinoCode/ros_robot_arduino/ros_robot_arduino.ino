@@ -24,13 +24,16 @@ Aft Left Motor        | A4  | A5  | 10
  0,1,9,11
  ---------------------------------------------------
  ---------- Incoming ROS Node Serial Data Format -----
- Incoming Data Format -> Left_Forward_Motor_Direction : PWM : Rigit_Forward_Motor_Direction : PWM
+ Incoming Data Format -> Start_Char:Left_Forward_Motor_Direction : PWM : Right_Forward_Motor_Direction : PWM : Left_Aft_Motor_Direction : PWM : Right_Aft_Motor_Direction : PWM : End_Char
+ e.g: 'KF200F200F200F200G'
+ Outgoing Data Format -> encoderTicks_Forward_Right_Motor,encoder_Forward_Left_Motor,encoder_Aft_Right_Motor,encoder_Aft_Left_Motor
+e.g: -1000,2,350,-145
  e.g.  S000F100  means: Direction=Stop,PWM=000 
  ---------- Algorithm -----------
 1- Read All Encoder Analog Data
 2- Read Valid Data From ROS Node with Start and End marker 
 3- Extract Right and Left Motor Command Data from ROS
-4- Send Analog Data After Read from ROS Node
+4- Convert Magnetic Encoder Analog Data to Encoder ticks and send to ROS Node
 5 - Check Safety and Write to motor
 
 
