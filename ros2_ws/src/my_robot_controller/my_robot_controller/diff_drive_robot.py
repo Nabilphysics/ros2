@@ -13,6 +13,7 @@ from rclpy.clock import Clock, ROSClock
 from math import sin, cos, pi
 from my_robot_controller.submodules.pid import PID 
 from my_robot_controller.submodules.encoder_to_wheel_jointstate import WheelState
+from my_robot_controller.submodules.encoder_wrap import EncoderWrap
 
 from rclpy.node import Node
 from geometry_msgs.msg import Quaternion
