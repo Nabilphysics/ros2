@@ -37,17 +37,11 @@ class DiffTf(Node):
         self.ticks_meter = 27190 #Experiment: 26850 Calculated: 27190
         self.wheel_one_rev_ticks = 10230  # Total Encoder count per one full roation of robot wheel
         self.base_width = 0.38 # in Meter
-        #self.base_frame_id = self.get_parameter('~base_frame_id','base_link') # the name of the base frame of the robot
-        self.base_frame_id = "base_footprint"
-        #self.odom_frame_id = self.get_parameter('~odom_frame_id', 'odom') # the name of the odometry reference frame
+        self.base_frame_id = "base_footprint" # Odometry Reference Frame
         self.odom_frame_id = "odom"
-        #self.encoder_min = self.get_parameter('encoder_min', -32768)
         self.encoder_min = -32768
-        #self.encoder_max = self.get_parameter('encoder_max', 32768)
         self.encoder_max = 32767
-        #self.encoder_low_wrap = self.get_parameter('wheel_low_wrap', (self.encoder_max - self.encoder_min) * 0.3 + self.encoder_min )
         self.encoder_low_wrap = ((self.encoder_max - self.encoder_min) * 0.3 + self.encoder_min) 
-        #self.encoder_high_wrap = self.get_parameter('wheel_high_wrap', (self.encoder_max - self.encoder_min) * 0.7 + self.encoder_min )
         self.encoder_high_wrap = ((self.encoder_max - self.encoder_min) * 0.7 + self.encoder_min )
         
         # previous encoder value
