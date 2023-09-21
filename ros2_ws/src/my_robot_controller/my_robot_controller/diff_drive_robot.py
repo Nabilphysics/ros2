@@ -13,7 +13,7 @@ from rclpy.clock import Clock, ROSClock
 from math import sin, cos, pi
 from my_robot_controller.submodules.pid import PID 
 from my_robot_controller.submodules.encoder_to_wheel_jointstate import WheelState
-from my_robot_controller.submodules.encoder_wrap import EncoderWrap
+#from my_robot_controller.submodules.encoder_wrap import EncoderWrap
 
 from rclpy.node import Node
 from geometry_msgs.msg import Quaternion
@@ -43,7 +43,13 @@ class DiffTf(Node):
         self.encoder_max = 32767
         self.encoder_low_wrap = ((self.encoder_max - self.encoder_min) * 0.3 + self.encoder_min) 
         self.encoder_high_wrap = ((self.encoder_max - self.encoder_min) * 0.7 + self.encoder_min )
-        
+        '''
+        # Encoder Object
+        self.left_forward_enc = EncoderWrap(encoder_min= -32768, encoder_max= 32767)
+        self.right_forward_enc = EncoderWrap(encoder_min= -32768, encoder_max= 32767)
+        self.left_aft_enc = EncoderWrap(encoder_min= -32768, encoder_max= 32767)
+        self.right_aft_enc = EncoderWrap(encoder_min= -32768, encoder_max= 32767)
+        '''
         # previous encoder value
         self.prv_enc_left_forward = None        # wheel encoder readings
         self.prv_enc_left_aft = None
@@ -55,6 +61,7 @@ class DiffTf(Node):
         self.curr_enc_right_forward = 0
         self.curr_enc_right_aft = 0
         
+        
         #self.lmult = 0
         self.l_f_mult = 0
         self.l_a_mult = 0
@@ -65,7 +72,7 @@ class DiffTf(Node):
         self.prev_l_a_encoder = 0
         self.prev_r_f_encoder = 0
         self.prev_r_a_encoder = 0
-
+        
         self.x = 0.0                  # position in xy plane 
         self.y = 0.0
         self.th = 0.0
@@ -85,6 +92,7 @@ class DiffTf(Node):
         self.applied_right_forward_pwm = 0.0
         self.applied_left_aft_pwm = 0
         self.applied_right_aft_Pwm = 0       
+
         # PID Object for four Motors, but for direction and target velocity left two motors and right two motors will be same and thus grouped.
         self.left_forward_pid = PID(Kp=120.0, Ki=110.0, Kd= 1.0 , highest_pwm=255, lowest_pwm=90) #KF080F055F060F085G
         self.right_forward_pid = PID(Kp=120.0, Ki=110.0, Kd= 1.0 , highest_pwm=255, lowest_pwm=60)
@@ -172,11 +180,17 @@ class DiffTf(Node):
             self.left_aft_motor_tick = int(serial_split[3])
         except:
             pass
+        '''
+        self.curr_enc_left_forward = self.left_forward_enc.getEncTick(self.left_forward_motor_tick)
+        self.curr_enc_right_forward = self.right_forward_enc.getEncTick(self.right_forward_motor_tick)
+        self.curr_enc_left_aft = self.left_aft_enc.getEncTick(self.left_aft_motor_tick)
+        self.curr_enc_right_aft = self.right_aft_enc.getEncTick(self.right_aft_motor_tick)
+        '''
         self.leftForwardEncoderCount(self.left_forward_motor_tick) # Send to Another Function. 
         self.rightForwardEncoderCount(self.right_forward_motor_tick) # Send to Another Function. 
         self.leftAftEncoderCount(self.left_aft_motor_tick)
         self.rightAftEncoderCount(self.right_aft_motor_tick)
-
+        
     def targetWheelVelocity(self):
         self.target_left_wheel_velocity = self.commanded_linear_velocity * 1.0 - ((self.commanded_angular_velocity * self.base_width)/2)
         self.target_right_wheel_velocity = self.commanded_linear_velocity * 1.0 + ((self.commanded_angular_velocity * self.base_width)/2)
@@ -310,7 +324,7 @@ class DiffTf(Node):
 
                 
                     
-             
+           
     def leftForwardEncoderCount(self, msg):
         enc = msg
         if (enc < self.encoder_low_wrap and self.prev_l_f_encoder > self.encoder_high_wrap):

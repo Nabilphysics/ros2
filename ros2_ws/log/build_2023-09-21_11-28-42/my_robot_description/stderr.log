@@ -1,0 +1,1 @@
+[0mCMake Error: The current CMakeCache.txt directory /home/nabil/ros2/ros2_ws/build/my_robot_description/CMakeCache.txt is different than the directory /home/nabil/ros2_ws/build/my_robot_description where CMakeCache.txt was created. This may result in binaries being created in the wrong place. If you are not sure, reedit the CMakeCache.txt[0m

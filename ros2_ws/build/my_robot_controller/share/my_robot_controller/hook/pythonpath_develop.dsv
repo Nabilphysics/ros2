@@ -1,1 +1,1 @@
-prepend-non-duplicate;PYTHONPATH;/home/nabil/ros2_ws/build/my_robot_controller
+prepend-non-duplicate;PYTHONPATH;/home/nabil/ros2/ros2_ws/build/my_robot_controller
