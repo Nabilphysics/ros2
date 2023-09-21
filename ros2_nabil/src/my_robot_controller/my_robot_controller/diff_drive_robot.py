@@ -308,8 +308,7 @@ class DiffTf(Node):
     def twistCallback(self, msg = Twist):
         self.commanded_linear_velocity = msg.linear.x
         self.commanded_angular_velocity = msg.angular.z
-        self.simulated_velocity = msg.linear.y
-   
+        
 
 def euler_to_quaternion(roll, pitch, yaw):
     qx = sin(roll/2) * cos(pitch/2) * cos(yaw/2) - cos(roll/2) * sin(pitch/2) * sin(yaw/2)
