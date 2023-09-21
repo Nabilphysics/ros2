@@ -1,9 +1,0 @@
-/home/nabil/ros2/ros2_ws/build/my_robot_bringup/CMakeFiles/uninstall.dir
-/home/nabil/ros2/ros2_ws/build/my_robot_bringup/CMakeFiles/my_robot_bringup_uninstall.dir
-/home/nabil/ros2/ros2_ws/build/my_robot_bringup/CMakeFiles/test.dir
-/home/nabil/ros2/ros2_ws/build/my_robot_bringup/CMakeFiles/edit_cache.dir
-/home/nabil/ros2/ros2_ws/build/my_robot_bringup/CMakeFiles/rebuild_cache.dir
-/home/nabil/ros2/ros2_ws/build/my_robot_bringup/CMakeFiles/list_install_components.dir
-/home/nabil/ros2/ros2_ws/build/my_robot_bringup/CMakeFiles/install.dir
-/home/nabil/ros2/ros2_ws/build/my_robot_bringup/CMakeFiles/install/local.dir
-/home/nabil/ros2/ros2_ws/build/my_robot_bringup/CMakeFiles/install/strip.dir

@@ -1,0 +1,37 @@
+[0.300s] Invoking command in '/home/nabil/ros2/ros2_nabil/src/my_robot_controller': PYTHONPATH=/home/nabil/ros2/ros2_nabil/build/my_robot_controller/prefix_override:/home/nabil/ros2/ros2_nabil/install/my_robot_controller/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/my_robot_controller build --build-base /home/nabil/ros2/ros2_nabil/build/my_robot_controller/build install --record /home/nabil/ros2/ros2_nabil/build/my_robot_controller/install.log --single-version-externally-managed
+[0.410s] running egg_info
+[0.411s] creating ../../build/my_robot_controller/my_robot_controller.egg-info
+[0.411s] writing ../../build/my_robot_controller/my_robot_controller.egg-info/PKG-INFO
+[0.411s] writing dependency_links to ../../build/my_robot_controller/my_robot_controller.egg-info/dependency_links.txt
+[0.411s] writing entry points to ../../build/my_robot_controller/my_robot_controller.egg-info/entry_points.txt
+[0.411s] writing requirements to ../../build/my_robot_controller/my_robot_controller.egg-info/requires.txt
+[0.411s] writing top-level names to ../../build/my_robot_controller/my_robot_controller.egg-info/top_level.txt
+[0.411s] writing manifest file '../../build/my_robot_controller/my_robot_controller.egg-info/SOURCES.txt'
+[0.412s] reading manifest file '../../build/my_robot_controller/my_robot_controller.egg-info/SOURCES.txt'
+[0.412s] writing manifest file '../../build/my_robot_controller/my_robot_controller.egg-info/SOURCES.txt'
+[0.412s] running build
+[0.412s] running build_py
+[0.412s] creating /home/nabil/ros2/ros2_nabil/build/my_robot_controller/build
+[0.412s] creating /home/nabil/ros2/ros2_nabil/build/my_robot_controller/build/lib
+[0.412s] creating /home/nabil/ros2/ros2_nabil/build/my_robot_controller/build/lib/my_robot_controller
+[0.412s] copying my_robot_controller/diff_drive_robot.py -> /home/nabil/ros2/ros2_nabil/build/my_robot_controller/build/lib/my_robot_controller
+[0.412s] copying my_robot_controller/__init__.py -> /home/nabil/ros2/ros2_nabil/build/my_robot_controller/build/lib/my_robot_controller
+[0.412s] running install
+[0.413s] running install_lib
+[0.413s] creating /home/nabil/ros2/ros2_nabil/install/my_robot_controller/lib/python3.10/site-packages/my_robot_controller
+[0.413s] copying /home/nabil/ros2/ros2_nabil/build/my_robot_controller/build/lib/my_robot_controller/diff_drive_robot.py -> /home/nabil/ros2/ros2_nabil/install/my_robot_controller/lib/python3.10/site-packages/my_robot_controller
+[0.413s] copying /home/nabil/ros2/ros2_nabil/build/my_robot_controller/build/lib/my_robot_controller/__init__.py -> /home/nabil/ros2/ros2_nabil/install/my_robot_controller/lib/python3.10/site-packages/my_robot_controller
+[0.413s] byte-compiling /home/nabil/ros2/ros2_nabil/install/my_robot_controller/lib/python3.10/site-packages/my_robot_controller/diff_drive_robot.py to diff_drive_robot.cpython-310.pyc
+[0.414s] byte-compiling /home/nabil/ros2/ros2_nabil/install/my_robot_controller/lib/python3.10/site-packages/my_robot_controller/__init__.py to __init__.cpython-310.pyc
+[0.414s] running install_data
+[0.414s] creating /home/nabil/ros2/ros2_nabil/install/my_robot_controller/share/ament_index
+[0.414s] creating /home/nabil/ros2/ros2_nabil/install/my_robot_controller/share/ament_index/resource_index
+[0.414s] creating /home/nabil/ros2/ros2_nabil/install/my_robot_controller/share/ament_index/resource_index/packages
+[0.415s] copying resource/my_robot_controller -> /home/nabil/ros2/ros2_nabil/install/my_robot_controller/share/ament_index/resource_index/packages
+[0.415s] copying package.xml -> /home/nabil/ros2/ros2_nabil/install/my_robot_controller/share/my_robot_controller
+[0.415s] running install_egg_info
+[0.415s] Copying ../../build/my_robot_controller/my_robot_controller.egg-info to /home/nabil/ros2/ros2_nabil/install/my_robot_controller/lib/python3.10/site-packages/my_robot_controller-0.0.0-py3.10.egg-info
+[0.415s] running install_scripts
+[0.424s] Installing diff_drive_robot script to /home/nabil/ros2/ros2_nabil/install/my_robot_controller/lib/my_robot_controller
+[0.425s] writing list of installed files to '/home/nabil/ros2/ros2_nabil/build/my_robot_controller/install.log'
+[0.437s] Invoked command in '/home/nabil/ros2/ros2_nabil/src/my_robot_controller' returned '0': PYTHONPATH=/home/nabil/ros2/ros2_nabil/build/my_robot_controller/prefix_override:/home/nabil/ros2/ros2_nabil/install/my_robot_controller/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/my_robot_controller build --build-base /home/nabil/ros2/ros2_nabil/build/my_robot_controller/build install --record /home/nabil/ros2/ros2_nabil/build/my_robot_controller/install.log --single-version-externally-managed
