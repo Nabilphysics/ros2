@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/nabil/ros2_ws/src/my_robot_description
+CMAKE_SOURCE_DIR = /home/nabil/ros2/ros2_ws/src/my_robot_description
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/nabil/ros2_ws/build/my_robot_description
+CMAKE_BINARY_DIR = /home/nabil/ros2/ros2_ws/build/my_robot_description
 
 # Utility rule file for my_robot_description_uninstall.
 
@@ -67,7 +67,7 @@ include CMakeFiles/my_robot_description_uninstall.dir/compiler_depend.make
 include CMakeFiles/my_robot_description_uninstall.dir/progress.make
 
 CMakeFiles/my_robot_description_uninstall:
-	/usr/bin/cmake -P /home/nabil/ros2_ws/build/my_robot_description/ament_cmake_uninstall_target/ament_cmake_uninstall_target.cmake
+	/usr/bin/cmake -P /home/nabil/ros2/ros2_ws/build/my_robot_description/ament_cmake_uninstall_target/ament_cmake_uninstall_target.cmake
 
 my_robot_description_uninstall: CMakeFiles/my_robot_description_uninstall
 my_robot_description_uninstall: CMakeFiles/my_robot_description_uninstall.dir/build.make
@@ -82,6 +82,6 @@ CMakeFiles/my_robot_description_uninstall.dir/clean:
 .PHONY : CMakeFiles/my_robot_description_uninstall.dir/clean
 
 CMakeFiles/my_robot_description_uninstall.dir/depend:
-	cd /home/nabil/ros2_ws/build/my_robot_description && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/nabil/ros2_ws/src/my_robot_description /home/nabil/ros2_ws/src/my_robot_description /home/nabil/ros2_ws/build/my_robot_description /home/nabil/ros2_ws/build/my_robot_description /home/nabil/ros2_ws/build/my_robot_description/CMakeFiles/my_robot_description_uninstall.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/nabil/ros2/ros2_ws/build/my_robot_description && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/nabil/ros2/ros2_ws/src/my_robot_description /home/nabil/ros2/ros2_ws/src/my_robot_description /home/nabil/ros2/ros2_ws/build/my_robot_description /home/nabil/ros2/ros2_ws/build/my_robot_description /home/nabil/ros2/ros2_ws/build/my_robot_description/CMakeFiles/my_robot_description_uninstall.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/my_robot_description_uninstall.dir/depend
 

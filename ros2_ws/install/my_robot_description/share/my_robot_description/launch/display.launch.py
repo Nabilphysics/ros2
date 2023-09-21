@@ -1,1 +1,1 @@
-/home/nabil/ros2_ws/src/my_robot_description/launch/display.launch.py
+/home/nabil/ros2/ros2_ws/src/my_robot_description/launch/display.launch.py

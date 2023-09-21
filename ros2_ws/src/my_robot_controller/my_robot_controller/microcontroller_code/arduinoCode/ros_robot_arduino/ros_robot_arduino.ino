@@ -58,7 +58,7 @@ Motor motorAftLeft(A5, A4, 10);
 EncoderCount encoderForwardRight(A0, '+'); // Give - or + if you want to change the counting direction
 EncoderCount encoderForwardLeft(A1, '-'); 
 EncoderCount encoderAftRight(A2, '+'); 
-EncoderCount encoderAftLeft(A3, '-'); 
+EncoderCount encoderAftLeft(A3, '+'); 
 //********* Encoder Object - End**********
 
 int leftForwardMotorPWM = 0;

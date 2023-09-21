@@ -1,0 +1,22 @@
+running develop
+running egg_info
+creating my_robot_controller.egg-info
+writing my_robot_controller.egg-info/PKG-INFO
+writing dependency_links to my_robot_controller.egg-info/dependency_links.txt
+writing entry points to my_robot_controller.egg-info/entry_points.txt
+writing requirements to my_robot_controller.egg-info/requires.txt
+writing top-level names to my_robot_controller.egg-info/top_level.txt
+writing manifest file 'my_robot_controller.egg-info/SOURCES.txt'
+reading manifest file 'my_robot_controller.egg-info/SOURCES.txt'
+writing manifest file 'my_robot_controller.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/nabil/ros2/ros2_ws/install/my_robot_controller/lib/python3.10/site-packages/my-robot-controller.egg-link (link to .)
+Installing diff_drive_robot script to /home/nabil/ros2/ros2_ws/install/my_robot_controller/lib/my_robot_controller
+
+Installed /home/nabil/ros2/ros2_ws/build/my_robot_controller
+running install_data
+creating /home/nabil/ros2/ros2_ws/install/my_robot_controller/share/ament_index
+creating /home/nabil/ros2/ros2_ws/install/my_robot_controller/share/ament_index/resource_index
+creating /home/nabil/ros2/ros2_ws/install/my_robot_controller/share/ament_index/resource_index/packages
+copying resource/my_robot_controller -> /home/nabil/ros2/ros2_ws/install/my_robot_controller/share/ament_index/resource_index/packages
+copying package.xml -> /home/nabil/ros2/ros2_ws/install/my_robot_controller/share/my_robot_controller
