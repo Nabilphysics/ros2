@@ -13,7 +13,7 @@ from rclpy.clock import Clock, ROSClock
 from math import sin, cos, pi
 from my_robot_controller.submodules.pid import PID 
 from my_robot_controller.submodules.encoder_to_wheel_jointstate import WheelState
-#from my_robot_controller.submodules.encoder_wrap import EncoderWrap
+from my_robot_controller.submodules.encoder_wrap import EncoderWrap
 
 from rclpy.node import Node
 from geometry_msgs.msg import Quaternion
@@ -30,7 +30,7 @@ ser = serial.Serial('/dev/ttyACM0', 115200, timeout=1)
 
 class DiffTf(Node):
     def __init__(self):
-        super().__init__('Differential_Drive_Robot')
+        super().__init__('Differential_Drive_Robot_Started')
         qos_profile = QoSProfile(depth=10)
         self.nodename = self.get_name()
         self.get_logger().info("-I- %s started" % self.nodename)
@@ -43,13 +43,13 @@ class DiffTf(Node):
         self.encoder_max = 32767
         self.encoder_low_wrap = ((self.encoder_max - self.encoder_min) * 0.3 + self.encoder_min) 
         self.encoder_high_wrap = ((self.encoder_max - self.encoder_min) * 0.7 + self.encoder_min )
-        '''
+        
         # Encoder Object
         self.left_forward_enc = EncoderWrap(encoder_min= -32768, encoder_max= 32767)
         self.right_forward_enc = EncoderWrap(encoder_min= -32768, encoder_max= 32767)
         self.left_aft_enc = EncoderWrap(encoder_min= -32768, encoder_max= 32767)
         self.right_aft_enc = EncoderWrap(encoder_min= -32768, encoder_max= 32767)
-        '''
+        
         # previous encoder value
         self.prv_enc_left_forward = None        # wheel encoder readings
         self.prv_enc_left_aft = None
@@ -60,18 +60,6 @@ class DiffTf(Node):
         self.curr_enc_left_aft = 0
         self.curr_enc_right_forward = 0
         self.curr_enc_right_aft = 0
-        
-        
-        #self.lmult = 0
-        self.l_f_mult = 0
-        self.l_a_mult = 0
-        self.r_f_mult = 0
-        self.r_a_mult = 0
-        
-        self.prev_l_f_encoder = 0
-        self.prev_l_a_encoder = 0
-        self.prev_r_f_encoder = 0
-        self.prev_r_a_encoder = 0
         
         self.x = 0.0                  # position in xy plane 
         self.y = 0.0
@@ -180,17 +168,12 @@ class DiffTf(Node):
             self.left_aft_motor_tick = int(serial_split[3])
         except:
             pass
-        '''
+        
         self.curr_enc_left_forward = self.left_forward_enc.getEncTick(self.left_forward_motor_tick)
         self.curr_enc_right_forward = self.right_forward_enc.getEncTick(self.right_forward_motor_tick)
         self.curr_enc_left_aft = self.left_aft_enc.getEncTick(self.left_aft_motor_tick)
         self.curr_enc_right_aft = self.right_aft_enc.getEncTick(self.right_aft_motor_tick)
-        '''
-        self.leftForwardEncoderCount(self.left_forward_motor_tick) # Send to Another Function. 
-        self.rightForwardEncoderCount(self.right_forward_motor_tick) # Send to Another Function. 
-        self.leftAftEncoderCount(self.left_aft_motor_tick)
-        self.rightAftEncoderCount(self.right_aft_motor_tick)
-        
+       
     def targetWheelVelocity(self):
         self.target_left_wheel_velocity = self.commanded_linear_velocity * 1.0 - ((self.commanded_angular_velocity * self.base_width)/2)
         self.target_right_wheel_velocity = self.commanded_linear_velocity * 1.0 + ((self.commanded_angular_velocity * self.base_width)/2)
@@ -322,53 +305,6 @@ class DiffTf(Node):
                 
                 self.odomPub.publish(odom)
 
-                
-                    
-           
-    def leftForwardEncoderCount(self, msg):
-        enc = msg
-        if (enc < self.encoder_low_wrap and self.prev_l_f_encoder > self.encoder_high_wrap):
-            self.l_f_mult = self.l_f_mult + 1
-       
-        if (enc > self.encoder_high_wrap and self.prev_l_f_encoder < self.encoder_low_wrap):
-            self.l_f_mult = self.l_f_mult - 1
-            
-        self.curr_enc_left_forward = 1.0 * (enc + self.l_f_mult * (self.encoder_max - self.encoder_min)) 
-        self.prev_l_f_encoder = enc
-        
-    def rightForwardEncoderCount(self, msg):
-        enc = msg
-        if(enc < self.encoder_low_wrap and self.prev_r_f_encoder > self.encoder_high_wrap):
-            self.r_f_mult = self.r_f_mult + 1
-        
-        if(enc > self.encoder_high_wrap and self.prev_r_f_encoder < self.encoder_low_wrap):
-            self.r_f_mult = self.r_f_mult - 1
-            
-        self.curr_enc_right_forward = 1.0 * (enc + self.r_f_mult * (self.encoder_max - self.encoder_min))
-        self.prev_r_f_encoder = enc
-    
-    def leftAftEncoderCount(self, msg):
-        enc = msg
-        if(enc < self.encoder_low_wrap and self.prev_l_a_encoder > self.encoder_high_wrap):
-            self.l_a_mult = self.l_a_mult + 1
-        
-        if(enc > self.encoder_high_wrap and self.prev_l_a_encoder < self.encoder_low_wrap):
-            self.l_a_mult = self.l_a_mult - 1
-            
-        self.curr_enc_left_aft = 1.0 * (enc + self.l_a_mult * (self.encoder_max - self.encoder_min))
-        self.prev_l_a_encoder = enc
-
-    def rightAftEncoderCount(self, msg):
-        enc = msg
-        if(enc < self.encoder_low_wrap and self.prev_r_a_encoder > self.encoder_high_wrap):
-            self.r_a_mult = self.r_a_mult + 1
-        
-        if(enc > self.encoder_high_wrap and self.prev_r_a_encoder < self.encoder_low_wrap):
-            self.r_a_mult = self.r_a_mult - 1
-            
-        self.curr_enc_right_aft = 1.0 * (enc + self.r_a_mult * (self.encoder_max - self.encoder_min))
-        self.prev_r_a_encoder = enc
-    
     def twistCallback(self, msg = Twist):
         self.commanded_linear_velocity = msg.linear.x
         self.commanded_angular_velocity = msg.angular.z

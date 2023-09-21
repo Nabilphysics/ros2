@@ -1,4 +1,4 @@
-/home/nabil/ros2/ros2_nabil/install/my_robot_bringup/share/my_robot_bringup//launch/diff_robot.launch.xml
+/home/nabil/ros2/ros2_nabil/install/my_robot_bringup/share/my_robot_bringup//launch/diff_nabil_robot.launch.xml
 /home/nabil/ros2/ros2_nabil/install/my_robot_bringup/share/my_robot_bringup//launch/my_robot_gazebo.launch.xml
 /home/nabil/ros2/ros2_nabil/install/my_robot_bringup/share/my_robot_bringup//rviz/diff_drive_robot.rviz
 /home/nabil/ros2/ros2_nabil/install/my_robot_bringup/share/my_robot_bringup//rviz/urdf_config.rviz

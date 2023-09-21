@@ -1,0 +1,17 @@
+[0.295s] Invoking command in '/home/nabil/ros2/ros2_nabil/build/my_robot_controller': PYTHONPATH=/home/nabil/ros2/ros2_nabil/build/my_robot_controller/prefix_override:/home/nabil/ros2/ros2_nabil/install/my_robot_controller/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/nabil/ros2/ros2_nabil/build/my_robot_controller/build --no-deps install_data
+[0.413s] running develop
+[0.480s] running egg_info
+[0.480s] writing my_robot_controller.egg-info/PKG-INFO
+[0.480s] writing dependency_links to my_robot_controller.egg-info/dependency_links.txt
+[0.480s] writing entry points to my_robot_controller.egg-info/entry_points.txt
+[0.480s] writing requirements to my_robot_controller.egg-info/requires.txt
+[0.480s] writing top-level names to my_robot_controller.egg-info/top_level.txt
+[0.481s] reading manifest file 'my_robot_controller.egg-info/SOURCES.txt'
+[0.481s] writing manifest file 'my_robot_controller.egg-info/SOURCES.txt'
+[0.482s] running build_ext
+[0.482s] Creating /home/nabil/ros2/ros2_nabil/install/my_robot_controller/lib/python3.10/site-packages/my-robot-controller.egg-link (link to .)
+[0.482s] Installing diff_drive_robot script to /home/nabil/ros2/ros2_nabil/install/my_robot_controller/lib/my_robot_controller
+[0.482s] 
+[0.482s] Installed /home/nabil/ros2/ros2_nabil/build/my_robot_controller
+[0.482s] running install_data
+[0.495s] Invoked command in '/home/nabil/ros2/ros2_nabil/build/my_robot_controller' returned '0': PYTHONPATH=/home/nabil/ros2/ros2_nabil/build/my_robot_controller/prefix_override:/home/nabil/ros2/ros2_nabil/install/my_robot_controller/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/nabil/ros2/ros2_nabil/build/my_robot_controller/build --no-deps install_data

@@ -1,0 +1,29 @@
+[0.013s] Invoking command in '/home/nabil/ros2/ros2_nabil/build/my_robot_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/nabil/ros2/ros2_nabil/install/my_robot_controller:/home/nabil/ros2_ws/install/my_robot_controller:/home/nabil/Desktop/bengalbot1/bengalbot_ws/install/bengalbot_controller:/home/nabil/Desktop/bengalbot1/bengalbot_ws/install/bengalbot:/opt/ros/humble /usr/bin/cmake --build /home/nabil/ros2/ros2_nabil/build/my_robot_description -- -j24 -l24
+[0.135s] Invoked command in '/home/nabil/ros2/ros2_nabil/build/my_robot_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/nabil/ros2/ros2_nabil/install/my_robot_controller:/home/nabil/ros2_ws/install/my_robot_controller:/home/nabil/Desktop/bengalbot1/bengalbot_ws/install/bengalbot_controller:/home/nabil/Desktop/bengalbot1/bengalbot_ws/install/bengalbot:/opt/ros/humble /usr/bin/cmake --build /home/nabil/ros2/ros2_nabil/build/my_robot_description -- -j24 -l24
+[0.147s] Invoking command in '/home/nabil/ros2/ros2_nabil/build/my_robot_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/nabil/ros2/ros2_nabil/install/my_robot_controller:/home/nabil/ros2_ws/install/my_robot_controller:/home/nabil/Desktop/bengalbot1/bengalbot_ws/install/bengalbot_controller:/home/nabil/Desktop/bengalbot1/bengalbot_ws/install/bengalbot:/opt/ros/humble /usr/bin/cmake --install /home/nabil/ros2/ros2_nabil/build/my_robot_description
+[0.150s] -- Install configuration: ""
+[0.150s] -- Execute custom install script
+[0.150s] -- Up-to-date symlink: /home/nabil/ros2/ros2_nabil/install/my_robot_description/share/my_robot_description//urdf/common_properties.xacro
+[0.150s] -- Up-to-date symlink: /home/nabil/ros2/ros2_nabil/install/my_robot_description/share/my_robot_description//urdf/mobile_base.xacro
+[0.150s] -- Up-to-date symlink: /home/nabil/ros2/ros2_nabil/install/my_robot_description/share/my_robot_description//urdf/mobile_base_gazebo.xacro
+[0.150s] -- Up-to-date symlink: /home/nabil/ros2/ros2_nabil/install/my_robot_description/share/my_robot_description//urdf/my_robot.urdf.xacro
+[0.151s] -- Up-to-date symlink: /home/nabil/ros2/ros2_nabil/install/my_robot_description/share/my_robot_description//launch/display.launch.py
+[0.151s] -- Up-to-date symlink: /home/nabil/ros2/ros2_nabil/install/my_robot_description/share/my_robot_description//launch/display.launch.xml
+[0.151s] -- Up-to-date symlink: /home/nabil/ros2/ros2_nabil/install/my_robot_description/share/my_robot_description//rviz/diff_drive_robot.rviz
+[0.151s] -- Up-to-date symlink: /home/nabil/ros2/ros2_nabil/install/my_robot_description/share/my_robot_description//rviz/urdf_config.rviz
+[0.151s] -- Up-to-date symlink: /home/nabil/ros2/ros2_nabil/install/my_robot_description/share/ament_index/resource_index/package_run_dependencies/my_robot_description
+[0.151s] -- Up-to-date symlink: /home/nabil/ros2/ros2_nabil/install/my_robot_description/share/ament_index/resource_index/parent_prefix_path/my_robot_description
+[0.151s] -- Up-to-date symlink: /home/nabil/ros2/ros2_nabil/install/my_robot_description/share/my_robot_description/environment/ament_prefix_path.sh
+[0.151s] -- Up-to-date symlink: /home/nabil/ros2/ros2_nabil/install/my_robot_description/share/my_robot_description/environment/ament_prefix_path.dsv
+[0.151s] -- Up-to-date symlink: /home/nabil/ros2/ros2_nabil/install/my_robot_description/share/my_robot_description/environment/path.sh
+[0.151s] -- Up-to-date symlink: /home/nabil/ros2/ros2_nabil/install/my_robot_description/share/my_robot_description/environment/path.dsv
+[0.151s] -- Up-to-date symlink: /home/nabil/ros2/ros2_nabil/install/my_robot_description/share/my_robot_description/local_setup.bash
+[0.151s] -- Up-to-date symlink: /home/nabil/ros2/ros2_nabil/install/my_robot_description/share/my_robot_description/local_setup.sh
+[0.151s] -- Up-to-date symlink: /home/nabil/ros2/ros2_nabil/install/my_robot_description/share/my_robot_description/local_setup.zsh
+[0.151s] -- Up-to-date symlink: /home/nabil/ros2/ros2_nabil/install/my_robot_description/share/my_robot_description/local_setup.dsv
+[0.151s] -- Symlinking: /home/nabil/ros2/ros2_nabil/install/my_robot_description/share/my_robot_description/package.dsv
+[0.155s] -- Up-to-date symlink: /home/nabil/ros2/ros2_nabil/install/my_robot_description/share/ament_index/resource_index/packages/my_robot_description
+[0.155s] -- Up-to-date symlink: /home/nabil/ros2/ros2_nabil/install/my_robot_description/share/my_robot_description/cmake/my_robot_descriptionConfig.cmake
+[0.155s] -- Up-to-date symlink: /home/nabil/ros2/ros2_nabil/install/my_robot_description/share/my_robot_description/cmake/my_robot_descriptionConfig-version.cmake
+[0.155s] -- Up-to-date symlink: /home/nabil/ros2/ros2_nabil/install/my_robot_description/share/my_robot_description/package.xml
+[0.156s] Invoked command in '/home/nabil/ros2/ros2_nabil/build/my_robot_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/nabil/ros2/ros2_nabil/install/my_robot_controller:/home/nabil/ros2_ws/install/my_robot_controller:/home/nabil/Desktop/bengalbot1/bengalbot_ws/install/bengalbot_controller:/home/nabil/Desktop/bengalbot1/bengalbot_ws/install/bengalbot:/opt/ros/humble /usr/bin/cmake --install /home/nabil/ros2/ros2_nabil/build/my_robot_description
