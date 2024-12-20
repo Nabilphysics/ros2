@@ -1,14 +1,26 @@
 ### Source ros2 :
+For ROS2 Version: humble
 ```
 source /opt/ros/humble/setup.bash
 ```
+For ROS2 Version: Jazzy
+```
+source /opt/ros/jazzy/setup.bash
+```
+
 ### Add source in bashrc
+Add ```su``` for root privilege
 ```
 nano ~./bashrc
 ```
-then add below command in the last line and save 
+then add the below command in the last line and save 
+For ROS2 Version: humble
 ```
 source /opt/ros/humble/setup.bash
+```
+For ROS2 Version: Jazzy
+```
+source /opt/ros/jazzy/setup.bash
 ```
 ### Demo Node to Listen:
 ```
