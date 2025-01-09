@@ -13,6 +13,10 @@ Add ```su``` for root privilege
 ```
 nano ~./bashrc
 ```
+or
+```
+nano .bashrc
+```
 then add the below command in the last line and save 
 For ROS2 Version: humble
 ```
