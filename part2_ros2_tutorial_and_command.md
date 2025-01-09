@@ -11,9 +11,9 @@ source /opt/ros/jazzy/setup.bash
 ### Add source in bashrc
 Add ```su``` for root privilege
 ```
-nano ~./bashrc
+nano ~/.bashrc
 ```
-or
+or if you are already in the home directory
 ```
 nano .bashrc
 ```
